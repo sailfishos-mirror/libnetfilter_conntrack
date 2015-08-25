@@ -69,6 +69,16 @@ static const void *get_attr_repl_port_dst(const struct nf_conntrack *ct)
 	return &ct->repl.l4dst.all;
 }
 
+static const void *get_attr_orig_zone(const struct nf_conntrack *ct)
+{
+	return &ct->head.orig.zone;
+}
+
+static const void *get_attr_repl_zone(const struct nf_conntrack *ct)
+{
+	return &ct->repl.zone;
+}
+
 static const void *get_attr_icmp_type(const struct nf_conntrack *ct)
 {
 	return &ct->head.orig.l4dst.icmp.type;
@@ -412,6 +422,8 @@ const get_attr get_attr_array[ATTR_MAX] = {
 	[ATTR_TCP_WSCALE_ORIG]		= get_attr_tcp_wscale_orig,
 	[ATTR_TCP_WSCALE_REPL]		= get_attr_tcp_wscale_repl,
 	[ATTR_ZONE]			= get_attr_zone,
+	[ATTR_ORIG_ZONE]		= get_attr_orig_zone,
+	[ATTR_REPL_ZONE]		= get_attr_repl_zone,
 	[ATTR_SECCTX]			= get_attr_secctx,
 	[ATTR_TIMESTAMP_START]		= get_attr_timestamp_start,
 	[ATTR_TIMESTAMP_STOP]		= get_attr_timestamp_stop,

@@ -86,18 +86,20 @@ static void __build_tuple_proto(struct nfnlhdr *req,
 	nfnl_nest_end(&req->nlh, nest);
 }
 
-void __build_tuple(struct nfnlhdr *req, 
-		   size_t size, 
-		   const struct __nfct_tuple *t, 
-		   const int type)
+static void __build_tuple_raw(struct nfnlhdr *req, size_t size,
+			      const struct __nfct_tuple *t)
+{
+	__build_tuple_ip(req, size, t);
+	__build_tuple_proto(req, size, t);
+}
+
+void __build_tuple(struct nfnlhdr *req, size_t size,
+		   const struct __nfct_tuple *t, const int type)
 {
 	struct nfattr *nest;
 
 	nest = nfnl_nest(&req->nlh, size, type);
-
-	__build_tuple_ip(req, size, t);
-	__build_tuple_proto(req, size, t);
-
+	__build_tuple_raw(req, size, t);
 	nfnl_nest_end(&req->nlh, nest);
 }
 
@@ -448,10 +450,20 @@ int __build_conntrack(struct nfnl_subsys_handle *ssh,
 	    test_bit(ATTR_ORIG_PORT_DST, ct->head.set) ||
 	    test_bit(ATTR_ORIG_L3PROTO, ct->head.set)  ||
 	    test_bit(ATTR_ORIG_L4PROTO, ct->head.set)  ||
+	    test_bit(ATTR_ORIG_ZONE, ct->head.set)     ||
 	    test_bit(ATTR_ICMP_TYPE, ct->head.set) 	  ||
 	    test_bit(ATTR_ICMP_CODE, ct->head.set)	  ||
-	    test_bit(ATTR_ICMP_ID, ct->head.set))
-		__build_tuple(req, size, &ct->head.orig, CTA_TUPLE_ORIG);
+	    test_bit(ATTR_ICMP_ID, ct->head.set)) {
+		const struct __nfct_tuple *t = &ct->head.orig;
+		struct nfattr *nest;
+
+		nest = nfnl_nest(&req->nlh, size, CTA_TUPLE_ORIG);
+		__build_tuple_raw(req, size, t);
+		if (test_bit(ATTR_ORIG_ZONE, ct->head.set))
+			nfnl_addattr16(&req->nlh, size, CTA_TUPLE_ZONE,
+				       htons(t->zone));
+		nfnl_nest_end(&req->nlh, nest);
+	}
 
 	if (test_bit(ATTR_REPL_IPV4_SRC, ct->head.set) ||
 	    test_bit(ATTR_REPL_IPV4_DST, ct->head.set) ||
@@ -460,8 +472,18 @@ int __build_conntrack(struct nfnl_subsys_handle *ssh,
 	    test_bit(ATTR_REPL_PORT_SRC, ct->head.set) ||
 	    test_bit(ATTR_REPL_PORT_DST, ct->head.set) ||
 	    test_bit(ATTR_REPL_L3PROTO, ct->head.set)  ||
-	    test_bit(ATTR_REPL_L4PROTO, ct->head.set))
-		__build_tuple(req, size, &ct->repl, CTA_TUPLE_REPLY);
+	    test_bit(ATTR_REPL_L4PROTO, ct->head.set)  ||
+	    test_bit(ATTR_REPL_ZONE, ct->head.set)) {
+		const struct __nfct_tuple *t = &ct->repl;
+		struct nfattr *nest;
+
+		nest = nfnl_nest(&req->nlh, size, CTA_TUPLE_REPLY);
+		__build_tuple_raw(req, size, t);
+		if (test_bit(ATTR_REPL_ZONE, ct->head.set))
+			nfnl_addattr16(&req->nlh, size, CTA_TUPLE_ZONE,
+				       htons(t->zone));
+		nfnl_nest_end(&req->nlh, nest);
+	}
 
 	if (test_bit(ATTR_MASTER_IPV4_SRC, ct->head.set) ||
 	    test_bit(ATTR_MASTER_IPV4_DST, ct->head.set) ||

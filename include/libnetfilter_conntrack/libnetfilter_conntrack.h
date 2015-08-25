@@ -136,6 +136,8 @@ enum nf_conntrack_attr {
 	ATTR_HELPER_INFO,			/* variable length */
 	ATTR_CONNLABELS,			/* variable length */
 	ATTR_CONNLABELS_MASK,			/* variable length */
+	ATTR_ORIG_ZONE,				/* u16 bits */
+	ATTR_REPL_ZONE,				/* u16 bits */
 	ATTR_MAX
 };
 

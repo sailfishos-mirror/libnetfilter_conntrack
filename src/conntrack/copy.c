@@ -89,6 +89,18 @@ static void copy_attr_repl_port_dst(struct nf_conntrack *dest,
 	dest->repl.l4dst.all = orig->repl.l4dst.all;
 }
 
+static void copy_attr_orig_zone(struct nf_conntrack *dest,
+				const struct nf_conntrack *orig)
+{
+	dest->head.orig.zone = orig->head.orig.zone;
+}
+
+static void copy_attr_repl_zone(struct nf_conntrack *dest,
+				const struct nf_conntrack *orig)
+{
+	dest->repl.zone = orig->repl.zone;
+}
+
 static void copy_attr_icmp_type(struct nf_conntrack *dest,
 				const struct nf_conntrack *orig)
 {
@@ -535,6 +547,8 @@ const copy_attr copy_attr_array[ATTR_MAX] = {
 	[ATTR_TCP_WSCALE_ORIG]		= copy_attr_tcp_wscale_orig,
 	[ATTR_TCP_WSCALE_REPL]		= copy_attr_tcp_wscale_repl,
 	[ATTR_ZONE]			= copy_attr_zone,
+	[ATTR_ORIG_ZONE]		= copy_attr_orig_zone,
+	[ATTR_REPL_ZONE]		= copy_attr_repl_zone,
 	[ATTR_SECCTX]			= copy_attr_secctx,
 	[ATTR_TIMESTAMP_START]		= copy_attr_timestamp_start,
 	[ATTR_TIMESTAMP_STOP]		= copy_attr_timestamp_stop,

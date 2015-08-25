@@ -81,6 +81,17 @@ nfct_build_tuple_proto(struct nlmsghdr *nlh, const struct __nfct_tuple *t)
 }
 
 int
+nfct_build_tuple_raw(struct nlmsghdr *nlh, const struct __nfct_tuple *t)
+{
+	if (nfct_build_tuple_ip(nlh, t) < 0)
+		return -1;
+	if (nfct_build_tuple_proto(nlh, t) < 0)
+		return -1;
+
+	return 0;
+}
+
+int
 nfct_build_tuple(struct nlmsghdr *nlh, const struct __nfct_tuple *t, int type)
 {
 	struct nlattr *nest;
@@ -89,9 +100,7 @@ nfct_build_tuple(struct nlmsghdr *nlh, const struct __nfct_tuple *t, int type)
 	if (nest == NULL)
 		return -1;
 
-	if (nfct_build_tuple_ip(nlh, t) < 0)
-		goto err;
-	if (nfct_build_tuple_proto(nlh, t) < 0)
+	if (nfct_build_tuple_raw(nlh, t) < 0)
 		goto err;
 
 	mnl_attr_nest_end(nlh, nest);
@@ -410,10 +419,26 @@ nfct_nlmsg_build(struct nlmsghdr *nlh, const struct nf_conntrack *ct)
 	    test_bit(ATTR_ORIG_PORT_DST, ct->head.set) ||
 	    test_bit(ATTR_ORIG_L3PROTO, ct->head.set) ||
 	    test_bit(ATTR_ORIG_L4PROTO, ct->head.set) ||
+	    test_bit(ATTR_ORIG_ZONE, ct->head.set) ||
 	    test_bit(ATTR_ICMP_TYPE, ct->head.set) ||
 	    test_bit(ATTR_ICMP_CODE, ct->head.set) ||
 	    test_bit(ATTR_ICMP_ID, ct->head.set)) {
-		nfct_build_tuple(nlh, &ct->head.orig, CTA_TUPLE_ORIG);
+		const struct __nfct_tuple *t = &ct->head.orig;
+		struct nlattr *nest;
+
+		nest = mnl_attr_nest_start(nlh, CTA_TUPLE_ORIG);
+		if (nest == NULL)
+			return -1;
+
+		if (nfct_build_tuple_raw(nlh, t) < 0) {
+			mnl_attr_nest_cancel(nlh, nest);
+			return -1;
+		}
+
+		if (test_bit(ATTR_ORIG_ZONE, ct->head.set))
+			mnl_attr_put_u16(nlh, CTA_TUPLE_ZONE, htons(t->zone));
+
+		mnl_attr_nest_end(nlh, nest);
 	}
 
 	if (test_bit(ATTR_REPL_IPV4_SRC, ct->head.set) ||
@@ -424,10 +449,26 @@ nfct_nlmsg_build(struct nlmsghdr *nlh, const struct nf_conntrack *ct)
 	    test_bit(ATTR_REPL_PORT_DST, ct->head.set) ||
 	    test_bit(ATTR_REPL_L3PROTO, ct->head.set) ||
 	    test_bit(ATTR_REPL_L4PROTO, ct->head.set) ||
+	    test_bit(ATTR_REPL_ZONE, ct->head.set) ||
 	    test_bit(ATTR_ICMP_TYPE, ct->head.set) ||
 	    test_bit(ATTR_ICMP_CODE, ct->head.set) ||
 	    test_bit(ATTR_ICMP_ID, ct->head.set)) {
-		nfct_build_tuple(nlh, &ct->repl, CTA_TUPLE_REPLY);
+		const struct __nfct_tuple *t = &ct->repl;
+		struct nlattr *nest;
+
+		nest = mnl_attr_nest_start(nlh, CTA_TUPLE_REPLY);
+		if (nest == NULL)
+			return -1;
+
+		if (nfct_build_tuple_raw(nlh, t) < 0) {
+			mnl_attr_nest_cancel(nlh, nest);
+			return -1;
+		}
+
+		if (test_bit(ATTR_REPL_ZONE, ct->head.set))
+			mnl_attr_put_u16(nlh, CTA_TUPLE_ZONE, htons(t->zone));
+
+		mnl_attr_nest_end(nlh, nest);
 	}
 
 	if (test_bit(ATTR_MASTER_IPV4_SRC, ct->head.set) ||

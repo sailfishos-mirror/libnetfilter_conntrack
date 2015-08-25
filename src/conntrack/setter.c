@@ -110,6 +110,18 @@ set_attr_repl_port_dst(struct nf_conntrack *ct, const void *value, size_t len)
 }
 
 static void
+set_attr_orig_zone(struct nf_conntrack *ct, const void *value, size_t len)
+{
+	ct->head.orig.zone = *((uint16_t *) value);
+}
+
+static void
+set_attr_repl_zone(struct nf_conntrack *ct, const void *value, size_t len)
+{
+	ct->repl.zone = *((uint16_t *) value);
+}
+
+static void
 set_attr_icmp_type(struct nf_conntrack *ct, const void *value, size_t len)
 {
 	uint8_t rtype;
@@ -507,6 +519,8 @@ const set_attr set_attr_array[ATTR_MAX] = {
 	[ATTR_TCP_WSCALE_ORIG]	= set_attr_tcp_wscale_orig,
 	[ATTR_TCP_WSCALE_REPL]	= set_attr_tcp_wscale_repl,
 	[ATTR_ZONE]		= set_attr_zone,
+	[ATTR_ORIG_ZONE]	= set_attr_orig_zone,
+	[ATTR_REPL_ZONE]	= set_attr_repl_zone,
 	[ATTR_SECCTX]		= set_attr_do_nothing,
 	[ATTR_TIMESTAMP_START]	= set_attr_do_nothing,
 	[ATTR_TIMESTAMP_STOP]	= set_attr_do_nothing,

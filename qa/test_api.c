@@ -385,6 +385,8 @@ static void test_nfct_cmp_api(struct nf_conntrack *ct1, struct nf_conntrack *ct2
 	printf("== test cmp API ==\n");
 
 	test_nfct_cmp_attr(ATTR_ZONE);
+	test_nfct_cmp_attr(ATTR_ORIG_ZONE);
+	test_nfct_cmp_attr(ATTR_REPL_ZONE);
 	test_nfct_cmp_attr(ATTR_MARK);
 
 	assert(nfct_cmp(ct1, ct2, NFCT_CMP_ALL) == 1);
