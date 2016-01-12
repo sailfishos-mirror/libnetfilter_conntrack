@@ -243,7 +243,7 @@ set_attr_snat_ipv4(struct nf_conntrack *ct, const void *value, size_t len)
 static void
 set_attr_dnat_ipv4(struct nf_conntrack *ct, const void *value, size_t len)
 {
-	ct->dnat.min_ip = ct->snat.max_ip = *((uint32_t *) value);
+	ct->dnat.min_ip = ct->dnat.max_ip = *((uint32_t *) value);
 }
 
 static void
