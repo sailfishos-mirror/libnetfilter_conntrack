@@ -214,6 +214,16 @@ static const void *get_attr_dnat_ipv4(const struct nf_conntrack *ct)
 	return &ct->dnat.min_ip.v4;
 }
 
+static const void *get_attr_snat_ipv6(const struct nf_conntrack *ct)
+{
+	return &ct->snat.min_ip.v6;
+}
+
+static const void *get_attr_dnat_ipv6(const struct nf_conntrack *ct)
+{
+	return &ct->dnat.min_ip.v6;
+}
+
 static const void *get_attr_snat_port(const struct nf_conntrack *ct)
 {
 	return &ct->snat.l4min.all;
@@ -430,4 +440,6 @@ const get_attr get_attr_array[ATTR_MAX] = {
 	[ATTR_HELPER_INFO]		= get_attr_helper_info,
 	[ATTR_CONNLABELS]		= get_attr_connlabels,
 	[ATTR_CONNLABELS_MASK]		= get_attr_connlabels_mask,
+	[ATTR_SNAT_IPV6]		= get_attr_snat_ipv6,
+	[ATTR_DNAT_IPV6]		= get_attr_dnat_ipv6,
 };

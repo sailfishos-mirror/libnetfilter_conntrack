@@ -138,6 +138,8 @@ enum nf_conntrack_attr {
 	ATTR_CONNLABELS_MASK,			/* variable length */
 	ATTR_ORIG_ZONE,				/* u16 bits */
 	ATTR_REPL_ZONE,				/* u16 bits */
+	ATTR_SNAT_IPV6,				/* u128 bits */
+	ATTR_DNAT_IPV6,				/* u128 bits */
 	ATTR_MAX
 };
 

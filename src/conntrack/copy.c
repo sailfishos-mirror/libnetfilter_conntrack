@@ -296,6 +296,20 @@ static void copy_attr_dnat_ipv4(struct nf_conntrack *dest,
 	dest->dnat.min_ip.v4 = orig->dnat.min_ip.v4;
 }
 
+static void copy_attr_snat_ipv6(struct nf_conntrack *dest,
+				const struct nf_conntrack *orig)
+{
+	memcpy(&dest->snat.min_ip.v6, &orig->snat.min_ip.v6,
+	       sizeof(struct in6_addr));
+}
+
+static void copy_attr_dnat_ipv6(struct nf_conntrack *dest,
+				const struct nf_conntrack *orig)
+{
+	memcpy(&dest->dnat.min_ip.v6, &orig->dnat.min_ip.v6,
+	       sizeof(struct in6_addr));
+}
+
 static void copy_attr_snat_port(struct nf_conntrack *dest,
 				const struct nf_conntrack *orig)
 {
@@ -555,6 +569,8 @@ const copy_attr copy_attr_array[ATTR_MAX] = {
 	[ATTR_HELPER_INFO]		= copy_attr_help_info,
 	[ATTR_CONNLABELS]		= copy_attr_connlabels,
 	[ATTR_CONNLABELS_MASK]		= copy_attr_connlabels_mask,
+	[ATTR_SNAT_IPV6]		= copy_attr_snat_ipv6,
+	[ATTR_DNAT_IPV6]		= copy_attr_dnat_ipv6,
 };
 
 /* this is used by nfct_copy() with the NFCT_CP_OVERRIDE flag set. */

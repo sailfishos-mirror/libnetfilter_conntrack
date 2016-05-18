@@ -271,6 +271,10 @@ nfct_build_nat(struct nlmsghdr *nlh, const struct __nfct_nat *nat,
 	case AF_INET:
 		mnl_attr_put_u32(nlh, CTA_NAT_MINIP, nat->min_ip.v4);
 		break;
+	case AF_INET6:
+		mnl_attr_put(nlh, CTA_NAT_V6_MINIP, sizeof(struct in6_addr),
+			     &nat->min_ip.v6);
+		break;
 	default:
 		break;
 	}
@@ -297,6 +301,17 @@ nfct_build_snat_ipv4(struct nlmsghdr *nlh, const struct nf_conntrack *ct)
 
 	nest = mnl_attr_nest_start(nlh, CTA_NAT_SRC);
 	nfct_build_nat(nlh, &ct->snat, AF_INET);
+	mnl_attr_nest_end(nlh, nest);
+	return 0;
+}
+
+static int
+nfct_build_snat_ipv6(struct nlmsghdr *nlh, const struct nf_conntrack *ct)
+{
+	struct nlattr *nest;
+
+	nest = mnl_attr_nest_start(nlh, CTA_NAT_SRC);
+	nfct_build_nat(nlh, &ct->snat, AF_INET6);
 	mnl_attr_nest_end(nlh, nest);
 	return 0;
 }
@@ -332,6 +347,17 @@ nfct_build_dnat_ipv4(struct nlmsghdr *nlh, const struct nf_conntrack *ct)
 
 	nest = mnl_attr_nest_start(nlh, CTA_NAT_DST);
 	nfct_build_nat(nlh, &ct->dnat, AF_INET);
+	mnl_attr_nest_end(nlh, nest);
+	return 0;
+}
+
+static int
+nfct_build_dnat_ipv6(struct nlmsghdr *nlh, const struct nf_conntrack *ct)
+{
+	struct nlattr *nest;
+
+	nest = mnl_attr_nest_start(nlh, CTA_NAT_DST);
+	nfct_build_nat(nlh, &ct->dnat, AF_INET6);
 	mnl_attr_nest_end(nlh, nest);
 	return 0;
 }
@@ -508,8 +534,13 @@ nfct_nlmsg_build(struct nlmsghdr *nlh, const struct nf_conntrack *ct)
 	if (test_bit(ATTR_SNAT_IPV4, ct->head.set) &&
 	    test_bit(ATTR_SNAT_PORT, ct->head.set)) {
 		nfct_build_snat(nlh, ct, AF_INET);
+	} else if (test_bit(ATTR_SNAT_IPV6, ct->head.set) &&
+		   test_bit(ATTR_SNAT_PORT, ct->head.set)) {
+		nfct_build_snat(nlh, ct, AF_INET6);
 	} else if (test_bit(ATTR_SNAT_IPV4, ct->head.set)) {
 		nfct_build_snat_ipv4(nlh, ct);
+	} else if (test_bit(ATTR_SNAT_IPV6, ct->head.set)) {
+		nfct_build_snat_ipv6(nlh, ct);
 	} else if (test_bit(ATTR_SNAT_PORT, ct->head.set)) {
 		nfct_build_snat_port(nlh, ct);
 	}
@@ -517,8 +548,13 @@ nfct_nlmsg_build(struct nlmsghdr *nlh, const struct nf_conntrack *ct)
 	if (test_bit(ATTR_DNAT_IPV4, ct->head.set) &&
 	    test_bit(ATTR_DNAT_PORT, ct->head.set)) {
 		nfct_build_dnat(nlh, ct, AF_INET);
+	} else if (test_bit(ATTR_DNAT_IPV6, ct->head.set) &&
+		   test_bit(ATTR_DNAT_PORT, ct->head.set)) {
+		nfct_build_dnat(nlh, ct, AF_INET6);
 	} else if (test_bit(ATTR_DNAT_IPV4, ct->head.set)) {
 		nfct_build_dnat_ipv4(nlh, ct);
+	} else if (test_bit(ATTR_DNAT_IPV6, ct->head.set)) {
+		nfct_build_dnat_ipv6(nlh, ct);
 	} else if (test_bit(ATTR_DNAT_PORT, ct->head.set)) {
 		nfct_build_dnat_port(nlh, ct);
 	}

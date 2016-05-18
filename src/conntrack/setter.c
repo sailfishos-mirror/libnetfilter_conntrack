@@ -247,6 +247,20 @@ set_attr_dnat_ipv4(struct nf_conntrack *ct, const void *value, size_t len)
 }
 
 static void
+set_attr_snat_ipv6(struct nf_conntrack *ct, const void *value, size_t len)
+{
+	memcpy(&ct->snat.min_ip.v6, value, sizeof(struct in6_addr));
+	memcpy(&ct->snat.max_ip.v6, value, sizeof(struct in6_addr));
+}
+
+static void
+set_attr_dnat_ipv6(struct nf_conntrack *ct, const void *value, size_t len)
+{
+	memcpy(&ct->dnat.min_ip.v6, value, sizeof(struct in6_addr));
+	memcpy(&ct->dnat.max_ip.v6, value, sizeof(struct in6_addr));
+}
+
+static void
 set_attr_snat_port(struct nf_conntrack *ct, const void *value, size_t len)
 {
 	ct->snat.l4min.all = ct->snat.l4max.all = *((uint16_t *) value);
@@ -527,4 +541,6 @@ const set_attr set_attr_array[ATTR_MAX] = {
 	[ATTR_HELPER_INFO]	= set_attr_helper_info,
 	[ATTR_CONNLABELS]	= set_attr_connlabels,
 	[ATTR_CONNLABELS_MASK]	= set_attr_connlabels_mask,
+	[ATTR_SNAT_IPV6]	= set_attr_snat_ipv6,
+	[ATTR_DNAT_IPV6]	= set_attr_dnat_ipv6,
 };
