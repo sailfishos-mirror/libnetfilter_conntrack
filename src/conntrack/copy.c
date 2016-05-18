@@ -287,13 +287,13 @@ static void copy_attr_dccp_handshake_seq(struct nf_conntrack *dest,
 static void copy_attr_snat_ipv4(struct nf_conntrack *dest,
 				const struct nf_conntrack *orig)
 {
-	dest->snat.min_ip = orig->snat.min_ip;
+	dest->snat.min_ip.v4 = orig->snat.min_ip.v4;
 }
 
 static void copy_attr_dnat_ipv4(struct nf_conntrack *dest,
 				const struct nf_conntrack *orig)
 {
-	dest->dnat.min_ip = orig->dnat.min_ip;
+	dest->dnat.min_ip.v4 = orig->dnat.min_ip.v4;
 }
 
 static void copy_attr_snat_port(struct nf_conntrack *dest,

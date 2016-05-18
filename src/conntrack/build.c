@@ -275,20 +275,28 @@ static void __build_protonat(struct nfnlhdr *req,
 
 static void __build_nat(struct nfnlhdr *req,
 			size_t size,
-			const struct __nfct_nat *nat)
+			const struct __nfct_nat *nat,
+			uint8_t l3protonum)
 {
-	nfnl_addattr_l(&req->nlh, size, CTA_NAT_MINIP,
-		       &nat->min_ip, sizeof(uint32_t));
+	switch (l3protonum) {
+	case AF_INET:
+		nfnl_addattr_l(&req->nlh, size, CTA_NAT_MINIP,
+			       &nat->min_ip.v4, sizeof(uint32_t));
+		break;
+	default:
+		break;
+	}
 }
 
 static void __build_snat(struct nfnlhdr *req,
 			 size_t size,
-			 const struct nf_conntrack *ct)
+			 const struct nf_conntrack *ct,
+			 uint8_t l3protonum)
 {
 	struct nfattr *nest;
 
 	nest = nfnl_nest(&req->nlh, size, CTA_NAT_SRC);
-	__build_nat(req, size, &ct->snat);
+	__build_nat(req, size, &ct->snat, l3protonum);
 	__build_protonat(req, size, ct, &ct->snat);
 	nfnl_nest_end(&req->nlh, nest);
 }
@@ -300,7 +308,7 @@ static void __build_snat_ipv4(struct nfnlhdr *req,
 	struct nfattr *nest;
 
 	nest = nfnl_nest(&req->nlh, size, CTA_NAT_SRC);
-	__build_nat(req, size, &ct->snat);
+	__build_nat(req, size, &ct->snat, AF_INET);
 	nfnl_nest_end(&req->nlh, nest);
 }
 
@@ -317,12 +325,13 @@ static void __build_snat_port(struct nfnlhdr *req,
 
 static void __build_dnat(struct nfnlhdr *req,
 			 size_t size,
-			 const struct nf_conntrack *ct)
+			 const struct nf_conntrack *ct,
+			 uint8_t l3protonum)
 {
 	struct nfattr *nest;
 
 	nest = nfnl_nest(&req->nlh, size, CTA_NAT_DST);
-	__build_nat(req, size, &ct->dnat);
+	__build_nat(req, size, &ct->dnat, l3protonum);
 	__build_protonat(req, size, ct, &ct->dnat);
 	nfnl_nest_end(&req->nlh, nest);
 }
@@ -334,7 +343,7 @@ static void __build_dnat_ipv4(struct nfnlhdr *req,
 	struct nfattr *nest;
 
 	nest = nfnl_nest(&req->nlh, size, CTA_NAT_DST);
-	__build_nat(req, size, &ct->dnat);
+	__build_nat(req, size, &ct->dnat, AF_INET);
 	nfnl_nest_end(&req->nlh, nest);
 }
 
@@ -514,9 +523,9 @@ int __build_conntrack(struct nfnl_subsys_handle *ssh,
 
 	__build_protoinfo(req, size, ct);
 
-	if (test_bit(ATTR_SNAT_IPV4, ct->head.set) && 
+	if (test_bit(ATTR_SNAT_IPV4, ct->head.set) &&
 	    test_bit(ATTR_SNAT_PORT, ct->head.set))
-		__build_snat(req, size, ct);
+		__build_snat(req, size, ct, AF_INET);
 	else if (test_bit(ATTR_SNAT_IPV4, ct->head.set))
 		__build_snat_ipv4(req, size, ct);
 	else if (test_bit(ATTR_SNAT_PORT, ct->head.set))
@@ -524,7 +533,7 @@ int __build_conntrack(struct nfnl_subsys_handle *ssh,
 
 	if (test_bit(ATTR_DNAT_IPV4, ct->head.set) &&
 	    test_bit(ATTR_DNAT_PORT, ct->head.set))
-		__build_dnat(req, size, ct);
+		__build_dnat(req, size, ct, AF_INET);
 	else if (test_bit(ATTR_DNAT_IPV4, ct->head.set))
 		__build_dnat_ipv4(req, size, ct);
 	else if (test_bit(ATTR_DNAT_PORT, ct->head.set))

@@ -237,13 +237,13 @@ set_attr_sctp_vtag_repl(struct nf_conntrack *ct, const void *value, size_t len)
 static void
 set_attr_snat_ipv4(struct nf_conntrack *ct, const void *value, size_t len)
 {
-	ct->snat.min_ip = ct->snat.max_ip = *((uint32_t *) value);
+	ct->snat.min_ip.v4 = ct->snat.max_ip.v4 = *((uint32_t *) value);
 }
 
 static void
 set_attr_dnat_ipv4(struct nf_conntrack *ct, const void *value, size_t len)
 {
-	ct->dnat.min_ip = ct->dnat.max_ip = *((uint32_t *) value);
+	ct->dnat.min_ip.v4 = ct->dnat.max_ip.v4 = *((uint32_t *) value);
 }
 
 static void

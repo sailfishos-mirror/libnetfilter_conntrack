@@ -206,12 +206,12 @@ static const void *get_attr_sctp_vtag_repl(const struct nf_conntrack *ct)
 
 static const void *get_attr_snat_ipv4(const struct nf_conntrack *ct)
 {
-	return &ct->snat.min_ip;
+	return &ct->snat.min_ip.v4;
 }
 
 static const void *get_attr_dnat_ipv4(const struct nf_conntrack *ct)
 {
-	return &ct->dnat.min_ip;
+	return &ct->dnat.min_ip.v4;
 }
 
 static const void *get_attr_snat_port(const struct nf_conntrack *ct)

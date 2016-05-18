@@ -144,7 +144,7 @@ struct __nfct_counters {
 };
 
 struct __nfct_nat {
-	uint32_t 		min_ip, max_ip;
+	union __nfct_address	min_ip, max_ip;
 	union __nfct_l4_src 	l4min, l4max;
 };
 

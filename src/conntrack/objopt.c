@@ -52,18 +52,29 @@ static void __autocomplete(struct nf_conntrack *ct, int dir)
 
 static void setobjopt_undo_snat(struct nf_conntrack *ct)
 {
-	ct->snat.min_ip = ct->repl.dst.v4;
-	ct->snat.max_ip = ct->snat.min_ip;
-	ct->repl.dst.v4 = ct->head.orig.src.v4;
-	set_bit(ATTR_SNAT_IPV4, ct->head.set);
+	switch (ct->head.orig.l3protonum) {
+	case AF_INET:
+		ct->snat.min_ip.v4 = ct->repl.dst.v4;
+		ct->snat.max_ip.v4 = ct->snat.min_ip.v4;
+		ct->repl.dst.v4 = ct->head.orig.src.v4;
+		set_bit(ATTR_SNAT_IPV4, ct->head.set);
+		break;
+	default:
+		break;
+	}
 }
 
 static void setobjopt_undo_dnat(struct nf_conntrack *ct)
 {
-	ct->dnat.min_ip = ct->repl.src.v4;
-	ct->dnat.max_ip = ct->dnat.min_ip;
-	ct->repl.src.v4 = ct->head.orig.dst.v4;
-	set_bit(ATTR_DNAT_IPV4, ct->head.set);
+	switch (ct->head.orig.l3protonum) {
+	case AF_INET:
+		ct->dnat.min_ip.v4 = ct->repl.src.v4;
+		ct->dnat.max_ip.v4 = ct->dnat.min_ip.v4;
+		ct->repl.src.v4 = ct->head.orig.dst.v4;
+		set_bit(ATTR_DNAT_IPV4, ct->head.set);
+	default:
+		break;
+	}
 }
 
 static void setobjopt_undo_spat(struct nf_conntrack *ct)
@@ -114,18 +125,34 @@ int __setobjopt(struct nf_conntrack *ct, unsigned int option)
 
 static int getobjopt_is_snat(const struct nf_conntrack *ct)
 {
-	return ((test_bit(ATTR_STATUS, ct->head.set) ?
-		ct->status & IPS_SRC_NAT_DONE : 1) &&
-		ct->repl.dst.v4 != 
-		ct->head.orig.src.v4);
+	if (!(test_bit(ATTR_STATUS, ct->head.set))
+		return 0;
+
+	if (!(ct->status & IPS_SRC_NAT_DONE))
+		return 0;
+
+	switch (ct->head.orig.l3protonum) {
+	case AF_INET:
+		return ct->repl.dst.v4 != ct->head.orig.src.v4;
+	default:
+		return 0;
+	}
 }
 
 static int getobjopt_is_dnat(const struct nf_conntrack *ct)
 {
-	return ((test_bit(ATTR_STATUS, ct->head.set) ?
-		ct->status & IPS_DST_NAT_DONE : 1) &&
-		ct->repl.src.v4 !=
-		ct->head.orig.dst.v4);
+	if (!(test_bit(ATTR_STATUS, ct->head.set))
+		return 0;
+
+	if (!(ct->status & IPS_DST_NAT_DONE))
+		return 0;
+
+	switch (ct->head.orig.l3protonum) {
+	case AF_INET:
+		return ct->repl.src.v4 != ct->head.orig.dst.v4;
+	default:
+		return 0;
+	}
 }
 
 static int getobjopt_is_spat(const struct nf_conntrack *ct)
