@@ -178,6 +178,8 @@ static int test_nfct_cmp_api_single(struct nf_conntrack *ct1,
 	/* FIXME: not implemented comparators: */
 	case ATTR_SNAT_IPV4:
 	case ATTR_DNAT_IPV4:
+	case ATTR_SNAT_IPV6:
+	case ATTR_DNAT_IPV6:
 	case ATTR_SNAT_PORT:
 	case ATTR_DNAT_PORT:
 
