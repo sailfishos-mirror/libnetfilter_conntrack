@@ -297,6 +297,7 @@ bool nfct_bitmask_equal(const struct nfct_bitmask *, const struct nfct_bitmask *
 /* connlabel name <-> bit translation mapping */
 struct nfct_labelmap;
 
+const char *nfct_labels_get_path(void);
 struct nfct_labelmap *nfct_labelmap_new(const char *mapfile);
 void nfct_labelmap_destroy(struct nfct_labelmap *map);
 const char *nfct_labelmap_get_name(struct nfct_labelmap *m, unsigned int bit);

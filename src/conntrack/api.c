@@ -1527,6 +1527,17 @@ void nfct_filter_dump_set_attr_u8(struct nfct_filter_dump *filter_dump,
  */
 
 /**
+ * nfct_labels_get_path - get name of default config path
+ *
+ * returns a pointer to a immutable (static) string containing
+ * the default connlabel.conf file location.
+ */
+const char *nfct_labels_get_path(void)
+{
+	return __labels_get_path();
+}
+
+/**
  * nfct_labelmap_get_name - get name of the label bit
  *
  * \param m label map obtained from nfct_label_open
