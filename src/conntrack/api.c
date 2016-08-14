@@ -955,7 +955,7 @@ int nfct_query(struct nfct_handle *h,
 	       const enum nf_conntrack_query qt,
 	       const void *data)
 {
-	size_t size = 4096;	/* enough for now */
+	const size_t size = 4096;	/* enough for now */
 	union {
 		char buffer[size];
 		struct nfnlhdr req;
@@ -987,7 +987,7 @@ int nfct_send(struct nfct_handle *h,
 	      const enum nf_conntrack_query qt,
 	      const void *data)
 {
-	size_t size = 4096;	/* enough for now */
+	const size_t size = 4096;	/* enough for now */
 	union {
 		char buffer[size];
 		struct nfnlhdr req;
