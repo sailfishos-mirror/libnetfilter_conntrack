@@ -14,7 +14,8 @@
 #include <netinet/in.h>
 #include <libnfnetlink/linux_nfnetlink.h>
 #include <libnfnetlink/libnfnetlink.h>
-#include <libnetfilter_conntrack/linux_nfnetlink_conntrack.h> 
+#include <libnetfilter_conntrack/linux_nfnetlink_conntrack.h>
+#include <libnetfilter_conntrack/linux_nf_conntrack_common.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -729,75 +730,6 @@ int nfexp_build_query(struct nfnl_subsys_handle *ssh,
 
 extern int nfexp_nlmsg_build(struct nlmsghdr *nlh, const struct nf_expect *exp);
 extern int nfexp_nlmsg_parse(const struct nlmsghdr *nlh, struct nf_expect *exp);
-
-/* Bitset representing status of connection. Taken from ip_conntrack.h
- * 
- * Note: For backward compatibility this shouldn't ever change
- * 	 in kernel space.
- */
-enum ip_conntrack_status {
-	/* It's an expected connection: bit 0 set.  This bit never changed */
-	IPS_EXPECTED_BIT = 0,
-	IPS_EXPECTED = (1 << IPS_EXPECTED_BIT),
-
-	/* We've seen packets both ways: bit 1 set.  Can be set, not unset. */
-	IPS_SEEN_REPLY_BIT = 1,
-	IPS_SEEN_REPLY = (1 << IPS_SEEN_REPLY_BIT),
-
-	/* Conntrack should never be early-expired. */
-	IPS_ASSURED_BIT = 2,
-	IPS_ASSURED = (1 << IPS_ASSURED_BIT),
-
-	/* Connection is confirmed: originating packet has left box */
-	IPS_CONFIRMED_BIT = 3,
-	IPS_CONFIRMED = (1 << IPS_CONFIRMED_BIT),
-
-	/* Connection needs src nat in orig dir.  This bit never changed. */
-	IPS_SRC_NAT_BIT = 4,
-	IPS_SRC_NAT = (1 << IPS_SRC_NAT_BIT),
-
-	/* Connection needs dst nat in orig dir.  This bit never changed. */
-	IPS_DST_NAT_BIT = 5,
-	IPS_DST_NAT = (1 << IPS_DST_NAT_BIT),
-
-	/* Both together. */
-	IPS_NAT_MASK = (IPS_DST_NAT | IPS_SRC_NAT),
-
-	/* Connection needs TCP sequence adjusted. */
-	IPS_SEQ_ADJUST_BIT = 6,
-	IPS_SEQ_ADJUST = (1 << IPS_SEQ_ADJUST_BIT),
-
-	/* NAT initialization bits. */
-	IPS_SRC_NAT_DONE_BIT = 7,
-	IPS_SRC_NAT_DONE = (1 << IPS_SRC_NAT_DONE_BIT),
-
-	IPS_DST_NAT_DONE_BIT = 8,
-	IPS_DST_NAT_DONE = (1 << IPS_DST_NAT_DONE_BIT),
-
-	/* Both together */
-	IPS_NAT_DONE_MASK = (IPS_DST_NAT_DONE | IPS_SRC_NAT_DONE),
-
-	/* Connection is dying (removed from lists), can not be unset. */
-	IPS_DYING_BIT = 9,
-	IPS_DYING = (1 << IPS_DYING_BIT),
-
-	/* Connection has fixed timeout. */
-	IPS_FIXED_TIMEOUT_BIT = 10,
-	IPS_FIXED_TIMEOUT = (1 << IPS_FIXED_TIMEOUT_BIT),
-
-	/* Conntrack is a template */
-	IPS_TEMPLATE_BIT = 11,
-	IPS_TEMPLATE = (1 << IPS_TEMPLATE_BIT),
-
-	/* Conntrack is a fake untracked entry */
-	IPS_UNTRACKED_BIT = 12,
-	IPS_UNTRACKED = (1 << IPS_UNTRACKED_BIT),
-};
-
-/* expectation flags */
-#define NF_CT_EXPECT_PERMANENT          0x1
-#define NF_CT_EXPECT_INACTIVE           0x2
-#define NF_CT_EXPECT_USERSPACE          0x4
 
 /*
  * TCP flags
