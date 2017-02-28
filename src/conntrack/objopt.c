@@ -81,6 +81,7 @@ static void setobjopt_undo_dnat(struct nf_conntrack *ct)
 		ct->dnat.max_ip.v4 = ct->dnat.min_ip.v4;
 		ct->repl.src.v4 = ct->head.orig.dst.v4;
 		set_bit(ATTR_DNAT_IPV4, ct->head.set);
+		break;
 	case AF_INET6:
 		memcpy(&ct->dnat.min_ip.v6, &ct->repl.src.v6,
 		       sizeof(struct in6_addr));
