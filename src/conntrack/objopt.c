@@ -144,10 +144,8 @@ int __setobjopt(struct nf_conntrack *ct, unsigned int option)
 
 static int getobjopt_is_snat(const struct nf_conntrack *ct)
 {
-	if (!(test_bit(ATTR_STATUS, ct->head.set)))
-		return 0;
-
-	if (!(ct->status & IPS_SRC_NAT_DONE))
+	if (test_bit(ATTR_STATUS, ct->head.set) &&
+	    !(ct->status & IPS_SRC_NAT_DONE))
 		return 0;
 
 	switch (ct->head.orig.l3protonum) {
@@ -166,10 +164,8 @@ static int getobjopt_is_snat(const struct nf_conntrack *ct)
 
 static int getobjopt_is_dnat(const struct nf_conntrack *ct)
 {
-	if (!(test_bit(ATTR_STATUS, ct->head.set)))
-		return 0;
-
-	if (!(ct->status & IPS_DST_NAT_DONE))
+	if (test_bit(ATTR_STATUS, ct->head.set) &&
+	    !(ct->status & IPS_DST_NAT_DONE))
 		return 0;
 
 	switch (ct->head.orig.l3protonum) {
