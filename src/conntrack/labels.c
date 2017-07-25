@@ -51,8 +51,14 @@ static unsigned int hash_name(const char *name)
 
 int __labelmap_get_bit(struct nfct_labelmap *m, const char *name)
 {
-	unsigned int i = hash_name(name);
-	struct labelmap_bucket *list = m->map_name[i];
+	struct labelmap_bucket *list;
+	unsigned int i;
+
+	if (!m)
+		return -1;
+
+	i = hash_name(name);
+	list = m->map_name[i];
 
 	while (list) {
 		if (strcmp(name, list->name) == 0)
