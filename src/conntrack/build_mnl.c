@@ -438,6 +438,18 @@ nfct_build_labels(struct nlmsghdr *nlh, const struct nf_conntrack *ct)
 	}
 }
 
+static void nfct_build_synproxy(struct nlmsghdr *nlh,
+				const struct nf_conntrack *ct)
+{
+	struct nlattr *nest;
+
+	nest = mnl_attr_nest_start(nlh, CTA_SYNPROXY);
+	mnl_attr_put_u32(nlh, CTA_SYNPROXY_ISN, htonl(ct->synproxy.isn));
+	mnl_attr_put_u32(nlh, CTA_SYNPROXY_ITS, htonl(ct->synproxy.its));
+	mnl_attr_put_u32(nlh, CTA_SYNPROXY_TSOFF, htonl(ct->synproxy.tsoff));
+	mnl_attr_nest_end(nlh, nest);
+}
+
 int
 nfct_nlmsg_build(struct nlmsghdr *nlh, const struct nf_conntrack *ct)
 {
@@ -578,6 +590,11 @@ nfct_nlmsg_build(struct nlmsghdr *nlh, const struct nf_conntrack *ct)
 
 	if (test_bit(ATTR_CONNLABELS, ct->head.set))
 		nfct_build_labels(nlh, ct);
+
+	if (test_bit(ATTR_SYNPROXY_ISN, ct->head.set) &&
+	    test_bit(ATTR_SYNPROXY_ITS, ct->head.set) &&
+	    test_bit(ATTR_SYNPROXY_TSOFF, ct->head.set))
+		nfct_build_synproxy(nlh, ct);
 
 	return 0;
 }

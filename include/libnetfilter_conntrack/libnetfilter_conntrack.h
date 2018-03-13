@@ -141,6 +141,9 @@ enum nf_conntrack_attr {
 	ATTR_REPL_ZONE,				/* u16 bits */
 	ATTR_SNAT_IPV6,				/* u128 bits */
 	ATTR_DNAT_IPV6,				/* u128 bits */
+	ATTR_SYNPROXY_ISN,			/* u32 bits */
+	ATTR_SYNPROXY_ITS,			/* u32 bits */
+	ATTR_SYNPROXY_TSOFF,			/* u32 bits */
 	ATTR_MAX
 };
 

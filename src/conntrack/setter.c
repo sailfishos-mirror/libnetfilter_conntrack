@@ -468,6 +468,24 @@ set_attr_connlabels_mask(struct nf_conntrack *ct, const void *value, size_t len)
 }
 
 static void
+set_attr_synproxy_isn(struct nf_conntrack *ct, const void *value, size_t len)
+{
+	ct->synproxy.isn = *((uint32_t *) value);
+}
+
+static void
+set_attr_synproxy_its(struct nf_conntrack *ct, const void *value, size_t len)
+{
+	ct->synproxy.its = *((uint32_t *) value);
+}
+
+static void
+set_attr_synproxy_tsoff(struct nf_conntrack *ct, const void *value, size_t len)
+{
+	ct->synproxy.tsoff = *((uint32_t *) value);
+}
+
+static void
 set_attr_do_nothing(struct nf_conntrack *ct, const void *value, size_t len) {}
 
 const set_attr set_attr_array[ATTR_MAX] = {
@@ -543,4 +561,7 @@ const set_attr set_attr_array[ATTR_MAX] = {
 	[ATTR_CONNLABELS_MASK]	= set_attr_connlabels_mask,
 	[ATTR_SNAT_IPV6]	= set_attr_snat_ipv6,
 	[ATTR_DNAT_IPV6]	= set_attr_dnat_ipv6,
+	[ATTR_SYNPROXY_ISN]	= set_attr_synproxy_isn,
+	[ATTR_SYNPROXY_ITS]	= set_attr_synproxy_its,
+	[ATTR_SYNPROXY_TSOFF]	= set_attr_synproxy_tsoff,
 };

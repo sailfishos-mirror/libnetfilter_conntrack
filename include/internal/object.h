@@ -189,6 +189,12 @@ struct nf_conntrack {
 		uint64_t	stop;
 	} timestamp;
 
+	struct {
+		uint32_t	isn;
+		uint32_t	its;
+		uint32_t	tsoff;
+	} synproxy;
+
 	void *helper_info;
 	size_t helper_info_len;
 

@@ -809,6 +809,55 @@ static int nfct_parse_labels(const struct nlattr *attr, struct nf_conntrack *ct)
 	return 0;
 }
 
+static int nfct_parse_synproxy_attr_cb(const struct nlattr *attr, void *data)
+{
+	int type = mnl_attr_get_type(attr);
+	const struct nlattr **tb = data;
+
+	if (mnl_attr_type_valid(attr, CTA_SYNPROXY_MAX) < 0)
+		return MNL_CB_OK;
+
+	switch(type) {
+	case CTA_SYNPROXY_ISN:
+	case CTA_SYNPROXY_ITS:
+	case CTA_SYNPROXY_TSOFF:
+		if (mnl_attr_validate(attr, MNL_TYPE_U32) < 0)
+			return MNL_CB_ERROR;
+		break;
+	}
+	tb[type] = attr;
+	return MNL_CB_OK;
+}
+
+static int nfct_parse_synproxy(const struct nlattr *attr,
+			       struct nf_conntrack *ct)
+{
+	struct nlattr *tb[CTA_SYNPROXY + 1] = {};
+
+	if (mnl_attr_parse_nested(attr, nfct_parse_synproxy_attr_cb, tb) < 0)
+		return -1;
+
+	if (tb[CTA_SYNPROXY_ISN]) {
+		ct->synproxy.isn =
+			ntohl(mnl_attr_get_u32(tb[CTA_SYNPROXY_ISN]));
+		set_bit(ATTR_SYNPROXY_ISN, ct->head.set);
+	}
+
+	if (tb[CTA_SYNPROXY_ITS]) {
+		ct->synproxy.its =
+			ntohl(mnl_attr_get_u32(tb[CTA_SYNPROXY_ITS]));
+		set_bit(ATTR_SYNPROXY_ITS, ct->head.set);
+	}
+
+	if (tb[CTA_SYNPROXY_TSOFF]) {
+		ct->synproxy.tsoff =
+			ntohl(mnl_attr_get_u32(tb[CTA_SYNPROXY_TSOFF]));
+		set_bit(ATTR_SYNPROXY_TSOFF, ct->head.set);
+	}
+
+	return 0;
+}
+
 static int
 nfct_parse_conntrack_attr_cb(const struct nlattr *attr, void *data)
 {
@@ -976,6 +1025,11 @@ nfct_payload_parse(const void *payload, size_t payload_len,
 			return -1;
 	}
 	/* CTA_LABELS_MASK: never sent by kernel */
+
+	if (tb[CTA_SYNPROXY]) {
+		if (nfct_parse_synproxy(tb[CTA_SYNPROXY], ct) < 0)
+			return -1;
+	}
 
 	return 0;
 }

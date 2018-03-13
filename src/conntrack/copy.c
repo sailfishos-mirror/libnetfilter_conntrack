@@ -498,6 +498,24 @@ static void copy_attr_connlabels_mask(struct nf_conntrack *dest,
 	dest->connlabels_mask = do_copy_attr_connlabels(dest->connlabels_mask, orig->connlabels_mask);
 }
 
+static void copy_attr_synproxy_its(struct nf_conntrack *dest,
+				   const struct nf_conntrack *orig)
+{
+	dest->synproxy.its = orig->synproxy.its;
+}
+
+static void copy_attr_synproxy_isn(struct nf_conntrack *dest,
+				   const struct nf_conntrack *orig)
+{
+	dest->synproxy.isn = orig->synproxy.isn;
+}
+
+static void copy_attr_synproxy_tsoff(struct nf_conntrack *dest,
+				     const struct nf_conntrack *orig)
+{
+	dest->synproxy.tsoff = orig->synproxy.tsoff;
+}
+
 const copy_attr copy_attr_array[ATTR_MAX] = {
 	[ATTR_ORIG_IPV4_SRC]		= copy_attr_orig_ipv4_src,
 	[ATTR_ORIG_IPV4_DST] 		= copy_attr_orig_ipv4_dst,
@@ -571,6 +589,9 @@ const copy_attr copy_attr_array[ATTR_MAX] = {
 	[ATTR_CONNLABELS_MASK]		= copy_attr_connlabels_mask,
 	[ATTR_SNAT_IPV6]		= copy_attr_snat_ipv6,
 	[ATTR_DNAT_IPV6]		= copy_attr_dnat_ipv6,
+	[ATTR_SYNPROXY_ITS]		= copy_attr_synproxy_its,
+	[ATTR_SYNPROXY_ISN]		= copy_attr_synproxy_isn,
+	[ATTR_SYNPROXY_TSOFF]		= copy_attr_synproxy_tsoff,
 };
 
 /* this is used by nfct_copy() with the NFCT_CP_OVERRIDE flag set. */

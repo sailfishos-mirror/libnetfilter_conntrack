@@ -422,6 +422,31 @@ __parse_nat_seq(const struct nfattr *attr, struct nf_conntrack *ct, int dir)
 	}
 }
 
+static void __parse_synproxy(const struct nfattr *attr, struct nf_conntrack *ct)
+{
+	struct nfattr *tb[CTA_SYNPROXY_MAX];
+
+	nfnl_parse_nested(tb, CTA_SYNPROXY_MAX, attr);
+
+	if (tb[CTA_SYNPROXY_ISN - 1]) {
+		ct->synproxy.isn =
+			ntohl(*(uint32_t *)NFA_DATA(tb[CTA_SYNPROXY_ISN-1]));
+		set_bit(ATTR_SYNPROXY_ISN, ct->head.set);
+	}
+
+	if (tb[CTA_SYNPROXY_ITS - 1]) {
+		ct->synproxy.its =
+			ntohl(*(uint32_t *)NFA_DATA(tb[CTA_SYNPROXY_ITS-1]));
+		set_bit(ATTR_SYNPROXY_ITS, ct->head.set);
+	}
+
+	if (tb[CTA_SYNPROXY_TSOFF - 1]) {
+		ct->synproxy.tsoff =
+			ntohl(*(uint32_t *)NFA_DATA(tb[CTA_SYNPROXY_TSOFF-1]));
+		set_bit(ATTR_SYNPROXY_TSOFF, ct->head.set);
+	}
+}
+
 static void 
 __parse_helper(const struct nfattr *attr, struct nf_conntrack *ct)
 {
@@ -596,4 +621,7 @@ void __parse_conntrack(const struct nlmsghdr *nlh,
 
 	if (cda[CTA_LABELS-1])
 		__parse_labels(cda[CTA_LABELS-1], ct);
+
+	if (cda[CTA_SYNPROXY-1])
+		__parse_synproxy(cda[CTA_SYNPROXY-1], ct);
 }

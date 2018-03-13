@@ -369,6 +369,21 @@ static const void *get_attr_connlabels_mask(const struct nf_conntrack *ct)
 	return ct->connlabels_mask;
 }
 
+static const void *get_attr_synproxy_isn(const struct nf_conntrack *ct)
+{
+	return &ct->synproxy.isn;
+}
+
+static const void *get_attr_synproxy_its(const struct nf_conntrack *ct)
+{
+	return &ct->synproxy.its;
+}
+
+static const void *get_attr_synproxy_tsoff(const struct nf_conntrack *ct)
+{
+	return &ct->synproxy.tsoff;
+}
+
 const get_attr get_attr_array[ATTR_MAX] = {
 	[ATTR_ORIG_IPV4_SRC]		= get_attr_orig_ipv4_src,
 	[ATTR_ORIG_IPV4_DST] 		= get_attr_orig_ipv4_dst,
@@ -442,4 +457,7 @@ const get_attr get_attr_array[ATTR_MAX] = {
 	[ATTR_CONNLABELS_MASK]		= get_attr_connlabels_mask,
 	[ATTR_SNAT_IPV6]		= get_attr_snat_ipv6,
 	[ATTR_DNAT_IPV6]		= get_attr_dnat_ipv6,
+	[ATTR_SYNPROXY_ISN]		= get_attr_synproxy_isn,
+	[ATTR_SYNPROXY_ITS]		= get_attr_synproxy_its,
+	[ATTR_SYNPROXY_TSOFF]		= get_attr_synproxy_tsoff,
 };

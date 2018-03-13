@@ -459,6 +459,21 @@ static void __build_labels(struct nfnlhdr *req,
 	}
 }
 
+static void __build_synproxy(struct nfnlhdr *req, size_t size,
+			     const struct nf_conntrack *ct)
+{
+	struct nfattr *nest;
+
+	nest = nfnl_nest(&req->nlh, size, CTA_SYNPROXY);
+	nfnl_addattr32(&req->nlh, size, CTA_SYNPROXY_ISN,
+		       htonl(ct->synproxy.isn));
+	nfnl_addattr32(&req->nlh, size, CTA_SYNPROXY_ITS,
+		       htonl(ct->synproxy.its));
+	nfnl_addattr32(&req->nlh, size, CTA_SYNPROXY_TSOFF,
+		       htonl(ct->synproxy.tsoff));
+	nfnl_nest_end(&req->nlh, nest);
+}
+
 int __build_conntrack(struct nfnl_subsys_handle *ssh,
 		      struct nfnlhdr *req,
 		      size_t size,
@@ -593,6 +608,11 @@ int __build_conntrack(struct nfnl_subsys_handle *ssh,
 
 	if (test_bit(ATTR_CONNLABELS, ct->head.set))
 		__build_labels(req, size, ct);
+
+	if (test_bit(ATTR_SYNPROXY_ISN, ct->head.set) &&
+	    test_bit(ATTR_SYNPROXY_ITS, ct->head.set) &&
+	    test_bit(ATTR_SYNPROXY_TSOFF, ct->head.set))
+		__build_synproxy(req, size, ct);
 
 	return 0;
 }
