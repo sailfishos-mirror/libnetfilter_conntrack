@@ -26,21 +26,21 @@ static int nlmsg_parse_expection_attr_cb(const struct nlattr *attr, void *data)
 	case CTA_EXPECT_TUPLE:
 	case CTA_EXPECT_MASK:
 		if (mnl_attr_validate(attr, MNL_TYPE_NESTED) < 0)
-			return MNL_CB_ERROR;
+			abi_breakage();
 		break;
 	case CTA_EXPECT_TIMEOUT:
 	case CTA_EXPECT_FLAGS:
 	case CTA_EXPECT_ID:
 		if (mnl_attr_validate(attr, MNL_TYPE_U32) < 0)
-			return MNL_CB_ERROR;
+			abi_breakage();
 		break;
 	case CTA_EXPECT_HELP_NAME:
 		if (mnl_attr_validate(attr, MNL_TYPE_STRING) < 0)
-			return MNL_CB_ERROR;
+			abi_breakage();
 		break;
 	case CTA_EXPECT_ZONE:
 		if (mnl_attr_validate(attr, MNL_TYPE_U16) < 0)
-			return MNL_CB_ERROR;
+			abi_breakage();
 		break;
 	}
 	tb[type] = attr;
