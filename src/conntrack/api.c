@@ -12,6 +12,7 @@
 #include <string.h> /* for memset */
 #include <errno.h>
 #include <assert.h>
+#include <libmnl/libmnl.h>
 
 #include "internal/internal.h"
 
@@ -880,6 +881,23 @@ int nfct_build_query(struct nfnl_subsys_handle *ssh,
 	return __build_query_ct(ssh, qt, data, buffer, size);
 }
 
+static int __parse_message_type(const struct nlmsghdr *nlh)
+{
+	uint16_t type = NFNL_MSG_TYPE(nlh->nlmsg_type);
+	uint16_t flags = nlh->nlmsg_flags;
+	int ret = NFCT_T_UNKNOWN;
+
+	if (type == IPCTNL_MSG_CT_NEW) {
+		if (flags & (NLM_F_CREATE|NLM_F_EXCL))
+			ret = NFCT_T_NEW;
+		else
+			ret = NFCT_T_UPDATE;
+	} else if (type == IPCTNL_MSG_CT_DELETE)
+		ret = NFCT_T_DESTROY;
+
+	return ret;
+}
+
 /**
  * nfct_parse_conntrack - translate a netlink message to a conntrack object
  * \param type do the translation iif the message type is of a certain type
@@ -909,26 +927,15 @@ int nfct_parse_conntrack(enum nf_conntrack_msg_type type,
 			 struct nf_conntrack *ct)
 {
 	unsigned int flags;
-	int len = nlh->nlmsg_len;
-	struct nfgenmsg *nfhdr = NLMSG_DATA(nlh);
-	struct nfattr *cda[CTA_MAX];
 
 	assert(nlh != NULL);
 	assert(ct != NULL);
-
-	len -= NLMSG_LENGTH(sizeof(struct nfgenmsg));
-	if (len < 0) {
-		errno = EINVAL;
-		return NFCT_T_ERROR;
-	}
 
 	flags = __parse_message_type(nlh);
 	if (!(flags & type))
 		return 0;
 
-	nfnl_parse_attr(cda, CTA_MAX, NFA_DATA(nfhdr), len);
-
-	__parse_conntrack(nlh, cda, ct);
+	nfct_nlmsg_parse(nlh, ct);
 
 	return flags;
 }

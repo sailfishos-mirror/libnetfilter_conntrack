@@ -594,6 +594,23 @@ int nfexp_build_query(struct nfnl_subsys_handle *ssh,
 	return __build_query_exp(ssh, qt, data, buffer, size);
 }
 
+static int __parse_expect_message_type(const struct nlmsghdr *nlh)
+{
+	uint16_t type = NFNL_MSG_TYPE(nlh->nlmsg_type);
+	uint16_t flags = nlh->nlmsg_flags;
+	int ret = NFCT_T_UNKNOWN;
+
+	if (type == IPCTNL_MSG_EXP_NEW) {
+		if (flags & (NLM_F_CREATE|NLM_F_EXCL))
+			ret = NFCT_T_NEW;
+		else
+			ret = NFCT_T_UPDATE;
+	} else if (type == IPCTNL_MSG_EXP_DELETE)
+		ret = NFCT_T_DESTROY;
+
+	return ret;
+}
+
 /**
  * nfexp_parse_expect - translate a netlink message to a conntrack object
  * \param type do the translation iif the message type is of a certain type
@@ -623,26 +640,15 @@ int nfexp_parse_expect(enum nf_conntrack_msg_type type,
 		       struct nf_expect *exp)
 {
 	unsigned int flags;
-	int len = nlh->nlmsg_len;
-	struct nfgenmsg *nfhdr = NLMSG_DATA(nlh);
-	struct nfattr *cda[CTA_EXPECT_MAX];
 
 	assert(nlh != NULL);
 	assert(exp != NULL);
-
-	len -= NLMSG_LENGTH(sizeof(struct nfgenmsg));
-	if (len < 0) {
-		errno = EINVAL;
-		return NFCT_T_ERROR;
-	}
 
 	flags = __parse_expect_message_type(nlh);
 	if (!(flags & type))
 		return 0;
 
-	nfnl_parse_attr(cda, CTA_EXPECT_MAX, NFA_DATA(nfhdr), len);
-
-	__parse_expect(nlh, cda, exp);
+	nfexp_nlmsg_parse(nlh, exp);
 
 	return flags;
 }
