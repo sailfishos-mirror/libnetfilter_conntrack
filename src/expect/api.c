@@ -11,6 +11,7 @@
 #include <string.h> /* for memset */
 #include <errno.h>
 #include <assert.h>
+#include <libmnl/libmnl.h>
 
 #include "internal/internal.h"
 
@@ -515,6 +516,24 @@ int nfexp_build_expect(struct nfnl_subsys_handle *ssh,
 	return __build_expect(ssh, req, size, type, flags, exp);
 }
 
+static void nfexp_fill_hdr(struct nfnlhdr *req, uint16_t type, uint16_t flags,
+			   uint8_t l3num, uint8_t version)
+{
+	char *buf = (char *)&req->nlh;
+	struct nlmsghdr *nlh;
+	struct nfgenmsg *nfh;
+
+	nlh = mnl_nlmsg_put_header(buf);
+	nlh->nlmsg_type = (NFNL_SUBSYS_CTNETLINK_EXP << 8) | type;
+	nlh->nlmsg_flags = NLM_F_REQUEST | flags;
+	nlh->nlmsg_seq = 0;
+
+	nfh = mnl_nlmsg_put_extra_header(nlh, sizeof(struct nfgenmsg));
+	nfh->nfgen_family = l3num;
+	nfh->version = version;
+	nfh->res_id = 0;
+}
+
 static int
 __build_query_exp(struct nfnl_subsys_handle *ssh,
 		  const enum nf_conntrack_query qt,
@@ -543,10 +562,12 @@ __build_query_exp(struct nfnl_subsys_handle *ssh,
 		__build_expect(ssh, req, size, IPCTNL_MSG_EXP_DELETE, NLM_F_REQUEST|NLM_F_ACK, data);
 		break;
 	case NFCT_Q_FLUSH:
-		nfnl_fill_hdr(ssh, &req->nlh, 0, *family, 0, IPCTNL_MSG_EXP_DELETE, NLM_F_REQUEST|NLM_F_ACK);
+		nfexp_fill_hdr(req, IPCTNL_MSG_EXP_DELETE, NLM_F_ACK, *family,
+			       NFNETLINK_V0);
 		break;
 	case NFCT_Q_DUMP:
-		nfnl_fill_hdr(ssh, &req->nlh, 0, *family, 0, IPCTNL_MSG_EXP_GET, NLM_F_REQUEST|NLM_F_DUMP);
+		nfexp_fill_hdr(req, IPCTNL_MSG_EXP_GET, NLM_F_DUMP, *family,
+			       NFNETLINK_V0);
 		break;
 	default:
 		errno = ENOTSUP;
