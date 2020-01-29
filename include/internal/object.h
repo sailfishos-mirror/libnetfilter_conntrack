@@ -288,6 +288,7 @@ struct nfct_filter {
  */
 
 struct nfct_filter_dump {
+	struct nf_conntrack		ct;
 	struct nfct_filter_dump_mark	mark;
 	struct nfct_filter_dump_mark	status;
 	uint8_t				l3num;

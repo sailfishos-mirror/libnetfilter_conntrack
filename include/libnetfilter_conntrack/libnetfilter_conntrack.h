@@ -547,6 +547,7 @@ enum nfct_filter_dump_attr {
 	NFCT_FILTER_DUMP_MARK = 0,	/* struct nfct_filter_dump_mark */
 	NFCT_FILTER_DUMP_L3NUM,		/* uint8_t */
 	NFCT_FILTER_DUMP_STATUS,	/* struct nfct_filter_dump_mark */
+	NFCT_FILTER_DUMP_TUPLE,
 	NFCT_FILTER_DUMP_MAX
 };
 
