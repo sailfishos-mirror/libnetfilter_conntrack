@@ -3,6 +3,7 @@
 /conntrack_delete
 /conntrack_dump
 /conntrack_dump_filter
+/conntrack_dump_filter_tuple
 /conntrack_events
 /conntrack_filter
 /conntrack_flush

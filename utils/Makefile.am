@@ -9,6 +9,7 @@ check_PROGRAMS = expect_dump expect_create expect_get expect_delete \
 	       conntrack_master conntrack_filter \
 	       conntrack_grp_create \
 	       conntrack_dump_filter \
+	       conntrack_dump_filter_tuple \
 	       ctexp_events
 
 conntrack_grp_create_SOURCES = conntrack_grp_create.c
@@ -34,6 +35,9 @@ conntrack_dump_LDADD = ../src/libnetfilter_conntrack.la
 
 conntrack_dump_filter_SOURCES = conntrack_dump_filter.c
 conntrack_dump_filter_LDADD = ../src/libnetfilter_conntrack.la
+
+conntrack_dump_filter_tuple_SOURCES = conntrack_dump_filter_tuple.c
+conntrack_dump_filter_tuple_LDADD = ../src/libnetfilter_conntrack.la
 
 conntrack_flush_SOURCES = conntrack_flush.c
 conntrack_flush_LDADD = ../src/libnetfilter_conntrack.la
