@@ -142,6 +142,7 @@ int nfexp_nlmsg_parse(const struct nlmsghdr *nlh, struct nf_expect *exp)
 		strncpy(exp->helper_name,
 			mnl_attr_get_str(tb[CTA_EXPECT_HELP_NAME]),
 			NFCT_HELPER_NAME_MAX);
+		exp->helper_name[NFCT_HELPER_NAME_MAX - 1] = '\0';
 		set_bit(ATTR_EXP_HELPER_NAME, exp->set);
 	}
 	if (tb[CTA_EXPECT_CLASS]) {
