@@ -184,7 +184,9 @@ static int __snprintf_status_assured(char *buf,
 {
 	int size = 0;
 
-	if (ct->status & IPS_OFFLOAD)
+	if (ct->status & IPS_HW_OFFLOAD)
+		size = snprintf(buf, len, "[HW_OFFLOAD] ");
+	else if (ct->status & IPS_OFFLOAD)
 		size = snprintf(buf, len, "[OFFLOAD] ");
 	else if (ct->status & IPS_ASSURED)
 		size = snprintf(buf, len, "[ASSURED] ");
