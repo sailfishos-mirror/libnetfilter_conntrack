@@ -85,6 +85,9 @@ int __snprintf_conntrack(char *buf,
 		return -1;
 	}
 
+	if (size < 0)
+		return size;
+
 	/* NULL terminated string */
 	buf[size+1 > len ? len-1 : size] = '\0';
 

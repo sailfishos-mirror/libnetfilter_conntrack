@@ -41,6 +41,8 @@
 #endif
 
 #define BUFFER_SIZE(ret, size, len, offset)		\
+	if (ret < 0)					\
+		return -1;				\
 	size += ret;					\
 	if (ret > len)					\
 		ret = len;				\
