@@ -13,20 +13,18 @@ static int __snprintf_l3protocol(char *buf,
 				 unsigned int len,
 				 const struct nf_conntrack *ct)
 {
-	return (snprintf(buf, len, "%-8s %u ", 
-		l3proto2str[ct->head.orig.l3protonum] == NULL ?
-		"unknown" : l3proto2str[ct->head.orig.l3protonum], 
-		 ct->head.orig.l3protonum));
+	uint8_t num = ct->head.orig.l3protonum;
+
+	return snprintf(buf, len, "%-8s %u ", __l3proto2str(num), num);
 }
 
 int __snprintf_protocol(char *buf,
 			unsigned int len,
 			const struct nf_conntrack *ct)
 {
-	return (snprintf(buf, len, "%-8s %u ", 
-		proto2str[ct->head.orig.protonum] == NULL ?
-		"unknown" : proto2str[ct->head.orig.protonum], 
-		 ct->head.orig.protonum));
+	uint8_t num = ct->head.orig.protonum;
+
+	return snprintf(buf, len, "%-8s %u ", __proto2str(num), num);
 }
 
 static int __snprintf_timeout(char *buf,
