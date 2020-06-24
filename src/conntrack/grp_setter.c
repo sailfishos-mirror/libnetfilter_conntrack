@@ -85,18 +85,20 @@ static void set_attr_grp_repl_port(struct nf_conntrack *ct, const void *value)
 
 static void set_attr_grp_icmp(struct nf_conntrack *ct, const void *value)
 {
-	uint8_t rtype;
 	const struct nfct_attr_grp_icmp *this = value;
+	uint8_t rtype = 0;
 
 	ct->head.orig.l4dst.icmp.type = this->type;
 
 	switch(ct->head.orig.l3protonum) {
 		case AF_INET:
-			rtype = invmap_icmp[this->type];
+			if (this->type < ARRAY_SIZE(invmap_icmp))
+				rtype = invmap_icmp[this->type];
 			break;
 
 		case AF_INET6:
-			rtype = invmap_icmpv6[this->type - 128];
+			if (this->type - 128 < ARRAY_SIZE(invmap_icmp))
+				rtype = invmap_icmpv6[this->type - 128];
 			break;
 
 		default:

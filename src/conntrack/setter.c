@@ -124,17 +124,20 @@ set_attr_repl_zone(struct nf_conntrack *ct, const void *value, size_t len)
 static void
 set_attr_icmp_type(struct nf_conntrack *ct, const void *value, size_t len)
 {
-	uint8_t rtype;
+	uint8_t type = *((uint8_t *) value);
+	uint8_t rtype = 0;
 
-	ct->head.orig.l4dst.icmp.type = *((uint8_t *) value);
+	ct->head.orig.l4dst.icmp.type = type;
 
 	switch(ct->head.orig.l3protonum) {
 		case AF_INET:
-			rtype = invmap_icmp[*((uint8_t *) value)];
+			if (type < ARRAY_SIZE(invmap_icmp))
+				rtype = invmap_icmp[type];
 			break;
 
 		case AF_INET6:
-			rtype = invmap_icmpv6[*((uint8_t *) value) - 128];
+			if (type - 128 < ARRAY_SIZE(invmap_icmpv6))
+				rtype = invmap_icmpv6[type - 128];
 			break;
 
 		default:
