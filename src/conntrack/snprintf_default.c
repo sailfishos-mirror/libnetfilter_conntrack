@@ -15,6 +15,9 @@ static int __snprintf_l3protocol(char *buf,
 {
 	uint8_t num = ct->head.orig.l3protonum;
 
+	if (!test_bit(ATTR_ORIG_L3PROTO, ct->head.set))
+		return -1;
+
 	return snprintf(buf, len, "%-8s %u ", __l3proto2str(num), num);
 }
 
@@ -23,6 +26,9 @@ int __snprintf_protocol(char *buf,
 			const struct nf_conntrack *ct)
 {
 	uint8_t num = ct->head.orig.protonum;
+
+	if (!test_bit(ATTR_ORIG_L4PROTO, ct->head.set))
+		return -1;
 
 	return snprintf(buf, len, "%-8s %u ", __proto2str(num), num);
 }
@@ -38,30 +44,48 @@ static int __snprintf_protoinfo(char *buf,
 				unsigned int len,
 				const struct nf_conntrack *ct)
 {
-	return snprintf(buf, len, "%s ",
-			ct->protoinfo.tcp.state < TCP_CONNTRACK_MAX ?
-			states[ct->protoinfo.tcp.state] :
-			states[TCP_CONNTRACK_NONE]);
+	uint8_t state = ct->protoinfo.tcp.state;
+	const char *str = NULL;
+
+	if (state < ARRAY_SIZE(states))
+		str = states[state];
+
+	if (str == NULL)
+		str = states[TCP_CONNTRACK_NONE];
+
+	return snprintf(buf, len, "%s ", str);
 }
 
 static int __snprintf_protoinfo_sctp(char *buf,
 				     unsigned int len,
 				     const struct nf_conntrack *ct)
 {
-	return snprintf(buf, len, "%s ",
-			ct->protoinfo.sctp.state < SCTP_CONNTRACK_MAX ?
-			sctp_states[ct->protoinfo.sctp.state] :
-			sctp_states[SCTP_CONNTRACK_NONE]);
+	uint8_t state = ct->protoinfo.sctp.state;
+	const char *str = NULL;
+
+	if (state < ARRAY_SIZE(sctp_states))
+		str = sctp_states[state];
+
+	if (str == NULL)
+		str = sctp_states[SCTP_CONNTRACK_NONE];
+
+	return snprintf(buf, len, "%s ", str);
 }
 
 static int __snprintf_protoinfo_dccp(char *buf,
 				     unsigned int len,
 				     const struct nf_conntrack *ct)
 {
-	return snprintf(buf, len, "%s ",
-			ct->protoinfo.dccp.state < DCCP_CONNTRACK_MAX ?
-			sctp_states[ct->protoinfo.dccp.state] :
-			sctp_states[DCCP_CONNTRACK_NONE]);
+	const char *str = NULL;
+	uint8_t state = ct->protoinfo.dccp.state;
+
+	if (state < ARRAY_SIZE(dccp_states))
+		str = dccp_states[state];
+
+	if (str == NULL)
+		str = dccp_states[SCTP_CONNTRACK_NONE];
+
+	return snprintf(buf, len, "%s ", str);
 }
 
 static int __snprintf_address_ipv4(char *buf,
@@ -134,7 +158,7 @@ int __snprintf_address(char *buf,
 	return size;
 }
 
-int __snprintf_proto(char *buf, 
+int __snprintf_proto(char *buf,
 		     unsigned int len,
 		     const struct __nfct_tuple *tuple)
 {
@@ -197,7 +221,7 @@ static int __snprintf_status_not_seen_reply(char *buf,
 					    const struct nf_conntrack *ct)
 {
 	int size = 0;
-	
+
         if (!(ct->status & IPS_SEEN_REPLY))
                 size = snprintf(buf, len, "[UNREPLIED] ");
 
@@ -345,7 +369,7 @@ __snprintf_clabels(char *buf, unsigned int len,
 	return size;
 }
 
-int __snprintf_conntrack_default(char *buf, 
+int __snprintf_conntrack_default(char *buf,
 				 unsigned int len,
 				 const struct nf_conntrack *ct,
 				 unsigned int msg_type,
