@@ -8,34 +8,6 @@
  */
 
 #include "internal/internal.h"
-#include <linux/icmp.h>
-#include <linux/icmpv6.h>
-
-static const uint8_t invmap_icmp[] = {
-	[ICMP_ECHO]		= ICMP_ECHOREPLY + 1,
-	[ICMP_ECHOREPLY]	= ICMP_ECHO + 1,
-	[ICMP_TIMESTAMP]	= ICMP_TIMESTAMPREPLY + 1,
-	[ICMP_TIMESTAMPREPLY]	= ICMP_TIMESTAMP + 1,
-	[ICMP_INFO_REQUEST]	= ICMP_INFO_REPLY + 1,
-	[ICMP_INFO_REPLY]	= ICMP_INFO_REQUEST + 1,
-	[ICMP_ADDRESS]		= ICMP_ADDRESSREPLY + 1,
-	[ICMP_ADDRESSREPLY]	= ICMP_ADDRESS + 1
-};
-
-#ifndef ICMPV6_NI_QUERY
-#define ICMPV6_NI_QUERY 139
-#endif
-
-#ifndef ICMPV6_NI_REPLY
-#define ICMPV6_NI_REPLY 140
-#endif
-
-static const uint8_t invmap_icmpv6[] = {
-	[ICMPV6_ECHO_REQUEST - 128]	= ICMPV6_ECHO_REPLY + 1,
-	[ICMPV6_ECHO_REPLY - 128]	= ICMPV6_ECHO_REQUEST + 1,
-	[ICMPV6_NI_QUERY - 128]		= ICMPV6_NI_QUERY + 1,
-	[ICMPV6_NI_REPLY - 128]		= ICMPV6_NI_REPLY + 1
-};
 
 static void set_attr_grp_orig_ipv4(struct nf_conntrack *ct, const void *value)
 {
@@ -92,13 +64,11 @@ static void set_attr_grp_icmp(struct nf_conntrack *ct, const void *value)
 
 	switch(ct->head.orig.l3protonum) {
 		case AF_INET:
-			if (this->type < ARRAY_SIZE(invmap_icmp))
-				rtype = invmap_icmp[this->type];
+			rtype = __icmp_reply_type(this->type);
 			break;
 
 		case AF_INET6:
-			if (this->type - 128 < ARRAY_SIZE(invmap_icmp))
-				rtype = invmap_icmpv6[this->type - 128];
+			rtype = __icmpv6_reply_type(this->type);
 			break;
 
 		default:

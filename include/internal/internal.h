@@ -27,6 +27,7 @@
 #include "internal/types.h"
 #include "internal/extern.h"
 #include "internal/bitops.h"
+#include "internal/proto.h"
 
 #ifndef IPPROTO_SCTP
 #define IPPROTO_SCTP 132
