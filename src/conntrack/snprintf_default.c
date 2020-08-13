@@ -83,7 +83,7 @@ static int __snprintf_protoinfo_dccp(char *buf,
 		str = dccp_states[state];
 
 	if (str == NULL)
-		str = dccp_states[SCTP_CONNTRACK_NONE];
+		str = dccp_states[DCCP_CONNTRACK_NONE];
 
 	return snprintf(buf, len, "%s ", str);
 }
