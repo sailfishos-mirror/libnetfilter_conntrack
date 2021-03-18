@@ -496,10 +496,7 @@ nfct_nlmsg_build(struct nlmsghdr *nlh, const struct nf_conntrack *ct)
 	    test_bit(ATTR_REPL_PORT_DST, ct->head.set) ||
 	    test_bit(ATTR_REPL_L3PROTO, ct->head.set) ||
 	    test_bit(ATTR_REPL_L4PROTO, ct->head.set) ||
-	    test_bit(ATTR_REPL_ZONE, ct->head.set) ||
-	    test_bit(ATTR_ICMP_TYPE, ct->head.set) ||
-	    test_bit(ATTR_ICMP_CODE, ct->head.set) ||
-	    test_bit(ATTR_ICMP_ID, ct->head.set)) {
+	    test_bit(ATTR_REPL_ZONE, ct->head.set)) {
 		const struct __nfct_tuple *t = &ct->repl;
 		struct nlattr *nest;
 
