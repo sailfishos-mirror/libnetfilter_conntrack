@@ -137,11 +137,11 @@ enum nf_conntrack_attr {
 	ATTR_HELPER_INFO,			/* variable length */
 	ATTR_CONNLABELS,			/* variable length */
 	ATTR_CONNLABELS_MASK,			/* variable length */
-	ATTR_ORIG_ZONE,				/* u16 bits */
+	ATTR_ORIG_ZONE = 68,			/* u16 bits */
 	ATTR_REPL_ZONE,				/* u16 bits */
 	ATTR_SNAT_IPV6,				/* u128 bits */
 	ATTR_DNAT_IPV6,				/* u128 bits */
-	ATTR_SYNPROXY_ISN,			/* u32 bits */
+	ATTR_SYNPROXY_ISN = 72,			/* u32 bits */
 	ATTR_SYNPROXY_ITS,			/* u32 bits */
 	ATTR_SYNPROXY_TSOFF,			/* u32 bits */
 	ATTR_MAX
@@ -546,6 +546,7 @@ struct nfct_filter_dump_mark {
 enum nfct_filter_dump_attr {
 	NFCT_FILTER_DUMP_MARK = 0,	/* struct nfct_filter_dump_mark */
 	NFCT_FILTER_DUMP_L3NUM,		/* uint8_t */
+	NFCT_FILTER_DUMP_STATUS,	/* struct nfct_filter_dump_mark */
 	NFCT_FILTER_DUMP_MAX
 };
 
