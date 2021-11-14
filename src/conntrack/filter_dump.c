@@ -8,6 +8,7 @@
  */
 
 #include "internal/internal.h"
+#include <libmnl/libmnl.h>
 
 static void
 set_filter_dump_attr_mark(struct nfct_filter_dump *filter_dump,
@@ -45,20 +46,5 @@ const set_filter_dump_attr set_filter_dump_attr_array[NFCT_FILTER_DUMP_MAX] = {
 void __build_filter_dump(struct nfnlhdr *req, size_t size,
 			 const struct nfct_filter_dump *filter_dump)
 {
-	if (filter_dump->set & (1 << NFCT_FILTER_DUMP_MARK)) {
-		nfnl_addattr32(&req->nlh, size, CTA_MARK,
-				htonl(filter_dump->mark.val));
-		nfnl_addattr32(&req->nlh, size, CTA_MARK_MASK,
-				htonl(filter_dump->mark.mask));
-	}
-	if (filter_dump->set & (1 << NFCT_FILTER_DUMP_L3NUM)) {
-		struct nfgenmsg *nfg = NLMSG_DATA(&req->nlh);
-		nfg->nfgen_family = filter_dump->l3num;
-	}
-	if (filter_dump->set & (1 << NFCT_FILTER_DUMP_STATUS)) {
-		nfnl_addattr32(&req->nlh, size, CTA_STATUS,
-				htonl(filter_dump->status.val));
-		nfnl_addattr32(&req->nlh, size, CTA_STATUS_MASK,
-				htonl(filter_dump->status.mask));
-	}
+	nfct_nlmsg_build_filter(&req->nlh, filter_dump);
 }

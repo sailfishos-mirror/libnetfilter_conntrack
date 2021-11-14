@@ -595,3 +595,25 @@ nfct_nlmsg_build(struct nlmsghdr *nlh, const struct nf_conntrack *ct)
 
 	return 0;
 }
+
+int nfct_nlmsg_build_filter(struct nlmsghdr *nlh,
+			    const struct nfct_filter_dump *filter_dump)
+{
+	struct nfgenmsg *nfg;
+
+	if (filter_dump->set & (1 << NFCT_FILTER_DUMP_MARK)) {
+		mnl_attr_put_u32(nlh, CTA_MARK, htonl(filter_dump->mark.val));
+		mnl_attr_put_u32(nlh, CTA_MARK_MASK, htonl(filter_dump->mark.mask));
+	}
+	if (filter_dump->set & (1 << NFCT_FILTER_DUMP_L3NUM)) {
+		nfg = mnl_nlmsg_get_payload(nlh);
+		nfg->nfgen_family = filter_dump->l3num;
+	}
+	if (filter_dump->set & (1 << NFCT_FILTER_DUMP_STATUS)) {
+		mnl_attr_put_u32(nlh, CTA_STATUS, htonl(filter_dump->status.val));
+		mnl_attr_put_u32(nlh, CTA_STATUS_MASK,
+				 htonl(filter_dump->status.mask));
+	}
+
+	return 0;
+}

@@ -587,6 +587,7 @@ int nfct_build_query(struct nfnl_subsys_handle *ssh,
 /* New low level API: netlink functions */
 
 extern int nfct_nlmsg_build(struct nlmsghdr *nlh, const struct nf_conntrack *ct);
+extern int nfct_nlmsg_build_filter(struct nlmsghdr *nlh, const struct nfct_filter_dump *filter_dump);
 extern int nfct_nlmsg_parse(const struct nlmsghdr *nlh, struct nf_conntrack *ct);
 extern int nfct_payload_parse(const void *payload, size_t payload_len, uint16_t l3num, struct nf_conntrack *ct);
 
