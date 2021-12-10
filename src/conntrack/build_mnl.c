@@ -73,8 +73,7 @@ nfct_build_tuple_proto(struct nlmsghdr *nlh, const struct __nfct_tuple *t)
 		mnl_attr_put_u16(nlh, CTA_PROTO_ICMPV6_ID, t->l4src.icmp.id);
 		break;
 	default:
-		mnl_attr_nest_cancel(nlh, nest);
-		return -1;
+		break;
 	}
 	mnl_attr_nest_end(nlh, nest);
 	return 0;
