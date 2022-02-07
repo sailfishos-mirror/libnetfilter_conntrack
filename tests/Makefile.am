@@ -5,6 +5,8 @@ check_PROGRAMS = test_api test_filter test_connlabel ct_stress \
 
 EXTRA_DIST = qa-connlabel.conf
 
+TESTS = test_api test_filter test_connlabel
+
 test_api_SOURCES = test_api.c
 test_api_LDADD = ../src/libnetfilter_conntrack.la
 
