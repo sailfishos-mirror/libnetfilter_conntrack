@@ -513,6 +513,8 @@ int nfexp_build_expect(struct nfnl_subsys_handle *ssh,
 	assert(req != NULL);
 	assert(exp != NULL);
 
+	memset(req, 0, size);
+
 	return __build_expect(ssh, req, size, type, flags, exp);
 }
 
@@ -546,7 +548,7 @@ __build_query_exp(struct nfnl_subsys_handle *ssh,
 	assert(data != NULL);
 	assert(req != NULL);
 
-	memset(req, 0, size);
+	memset(buffer, 0, size);
 
 	switch(qt) {
 	case NFCT_Q_CREATE:

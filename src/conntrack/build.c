@@ -27,8 +27,6 @@ int __build_conntrack(struct nfnl_subsys_handle *ssh,
 		return -1;
 	}
 
-	memset(req, 0, size);
-
 	buf = (char *)&req->nlh;
 	nlh = mnl_nlmsg_put_header(buf);
 	nlh->nlmsg_type = (NFNL_SUBSYS_CTNETLINK << 8) | type;

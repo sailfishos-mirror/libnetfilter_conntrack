@@ -779,6 +779,8 @@ int nfct_build_conntrack(struct nfnl_subsys_handle *ssh,
 	assert(req != NULL);
 	assert(ct != NULL);
 
+	memset(req, 0, size);
+
 	return __build_conntrack(ssh, req, size, type, flags, ct);
 }
 
@@ -812,7 +814,7 @@ __build_query_ct(struct nfnl_subsys_handle *ssh,
 	assert(data != NULL);
 	assert(req != NULL);
 
-	memset(req, 0, size);
+	memset(buffer, 0, size);
 
 	switch(qt) {
 	case NFCT_Q_CREATE:
