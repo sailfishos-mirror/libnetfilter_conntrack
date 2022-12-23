@@ -783,7 +783,7 @@ int __setup_netlink_socket_filter(int fd, struct nfct_filter *f)
 	show_filter(bsf, from, j, "---- final verdict ----");
 	from = j;
 
-	sf.len = (sizeof(struct sock_filter) * j) / sizeof(bsf[0]);
+	sf.len = j;
 	sf.filter = bsf;
 
 	return setsockopt(fd, SOL_SOCKET, SO_ATTACH_FILTER, &sf, sizeof(sf));
