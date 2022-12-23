@@ -9,6 +9,7 @@
 
 #include "internal/internal.h"
 #include "internal/stack.h"
+#include <endian.h>
 #include <linux/filter.h>
 #include <stddef.h>		/* offsetof */
 
@@ -301,10 +302,14 @@ bsf_cmp_subsys(struct sock_filter *this, int pos, uint8_t subsys)
 		[1] = {
 			/* A = skb->data[X+k:B] (subsys_id) */
 			.code	= BPF_LD|BPF_B|BPF_IND,
+#if BYTE_ORDER == BIG_ENDIAN
+			.k	= 0,
+#else
 			.k	= sizeof(uint8_t),
+#endif
 		},
 		[2] = {
-			/* A == subsys ? jump +1 : accept */
+			/* A == subsys ? jump + 1 : accept */
 			.code	= BPF_JMP|BPF_JEQ|BPF_K,
 			.k	= subsys,
 			.jt	= 1,
