@@ -163,7 +163,7 @@ struct jump {
 
 static int
 nfct_bsf_cmp_k_stack(struct sock_filter *this, int k, 
-	       int jump_true, int pos, struct stack *s)
+		     int jump_true, int pos, struct stack *s)
 {
 	struct sock_filter __code = {
 		.code	= BPF_JMP|BPF_JEQ|BPF_K,
@@ -640,8 +640,8 @@ bsf_add_addr_ipv6_filter(const struct nfct_filter *f,
 					      j);
 			if (k < 3) {
 				j += nfct_bsf_cmp_k_stack_jf(this, ip,
-						jf - j - 1,
-						j, s);
+							     (3 - k) * 3 + 1,
+							     j, s);
 			} else {
 				/* last word: jump if true */
 				j += nfct_bsf_cmp_k_stack(this, ip, jf - j,
@@ -655,7 +655,7 @@ bsf_add_addr_ipv6_filter(const struct nfct_filter *f,
 			this[jmp.line].jt += jmp.jt + j;
 		}
 		if (jmp.jf) {
-			this[jmp.line].jf += jmp.jf + j;
+			this[jmp.line].jf += jmp.jf;
 		}
 	}
 
