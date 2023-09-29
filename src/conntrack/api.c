@@ -307,7 +307,7 @@ int nfct_callback_register2(struct nfct_handle *h,
 
 	assert(h != NULL);
 
-	container = calloc(sizeof(struct __data_container), 1);
+	container = calloc(1, sizeof(struct __data_container));
 	if (container == NULL)
 		return -1;
 
@@ -1361,7 +1361,7 @@ void nfct_copy_attr(struct nf_conntrack *ct1,
  */
 struct nfct_filter *nfct_filter_create(void)
 {
-	return calloc(sizeof(struct nfct_filter), 1);
+	return calloc(1, sizeof(struct nfct_filter));
 }
 
 /**
@@ -1500,7 +1500,7 @@ int nfct_filter_detach(int fd)
  */
 struct nfct_filter_dump *nfct_filter_dump_create(void)
 {
-	return calloc(sizeof(struct nfct_filter_dump), 1);
+	return calloc(1, sizeof(struct nfct_filter_dump));
 }
 
 /**
