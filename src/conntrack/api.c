@@ -835,6 +835,8 @@ __build_query_ct(struct nfnl_subsys_handle *ssh,
 		break;
 	case NFCT_Q_FLUSH_FILTER:
 		nfct_fill_hdr(req, IPCTNL_MSG_CT_DELETE, NLM_F_ACK, *family, 1);
+		if (__build_filter_flush(req, size, data) < 0)
+			return -1;
 		break;
 	case NFCT_Q_DUMP:
 		nfct_fill_hdr(req, IPCTNL_MSG_CT_GET, NLM_F_DUMP, *family,

@@ -64,3 +64,13 @@ int __build_filter_dump(struct nfnlhdr *req, size_t size,
 {
 	return nfct_nlmsg_build_filter(&req->nlh, filter_dump);
 }
+
+int __build_filter_flush(struct nfnlhdr *req, size_t size,
+			const struct nfct_filter_dump *filter_dump)
+{
+	if (filter_dump->set & (1 << NFCT_FILTER_DUMP_TUPLE)) {
+		errno = ENOTSUP;
+		return -1;
+	}
+	return nfct_nlmsg_build_filter(&req->nlh, filter_dump);
+}
