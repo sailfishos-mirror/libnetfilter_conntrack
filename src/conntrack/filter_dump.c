@@ -38,6 +38,13 @@ set_filter_dump_attr_family(struct nfct_filter_dump *filter_dump,
 }
 
 static void
+set_filter_dump_attr_zone(struct nfct_filter_dump *filter_dump,
+			    const void *value)
+{
+	filter_dump->zone = *((uint16_t *)value);
+}
+
+static void
 set_filter_dump_attr_tuple(struct nfct_filter_dump *filter_dump,
 			   const void *value)
 {
@@ -48,6 +55,7 @@ const set_filter_dump_attr set_filter_dump_attr_array[NFCT_FILTER_DUMP_MAX] = {
 	[NFCT_FILTER_DUMP_MARK]		= set_filter_dump_attr_mark,
 	[NFCT_FILTER_DUMP_L3NUM]	= set_filter_dump_attr_family,
 	[NFCT_FILTER_DUMP_STATUS]	= set_filter_dump_attr_status,
+	[NFCT_FILTER_DUMP_ZONE]		= set_filter_dump_attr_zone,
 	[NFCT_FILTER_DUMP_TUPLE]	= set_filter_dump_attr_tuple,
 };
 

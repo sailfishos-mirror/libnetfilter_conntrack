@@ -1552,6 +1552,19 @@ void nfct_filter_dump_set_attr_u8(struct nfct_filter_dump *filter_dump,
 }
 
 /**
+ * nfct_filter_dump_attr_set_u16 - set u16 dump filter attribute
+ * \param filter dump filter object that we want to modify
+ * \param type filter attribute type
+ * \param value value of the filter attribute using unsigned int (32 bits).
+ */
+void nfct_filter_dump_set_attr_u16(struct nfct_filter_dump *filter_dump,
+				  const enum nfct_filter_dump_attr type,
+				  uint16_t value)
+{
+	nfct_filter_dump_set_attr(filter_dump, type, &value);
+}
+
+/**
  * @}
  */
 

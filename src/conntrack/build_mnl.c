@@ -658,6 +658,9 @@ int nfct_nlmsg_build_filter(struct nlmsghdr *nlh,
 		mnl_attr_put_u32(nlh, CTA_STATUS_MASK,
 				 htonl(filter_dump->status.mask));
 	}
+	if (filter_dump->set & (1 << NFCT_FILTER_DUMP_ZONE)) {
+		mnl_attr_put_u16(nlh, CTA_ZONE, htons(filter_dump->zone));
+	}
 	if (filter_dump->set & (1 << NFCT_FILTER_DUMP_TUPLE)) {
 		const struct nf_conntrack *ct = &filter_dump->ct;
 		struct nlattr *nest;

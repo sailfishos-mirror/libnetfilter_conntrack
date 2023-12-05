@@ -40,6 +40,8 @@ int main(void)
 					&filter_dump_mark);
 	nfct_filter_dump_set_attr_u8(filter_dump, NFCT_FILTER_DUMP_L3NUM,
 					AF_INET);
+	nfct_filter_dump_set_attr_u16(filter_dump, NFCT_FILTER_DUMP_ZONE,
+					123);
 
 	nfct_callback_register(h, NFCT_T_ALL, cb, NULL);
 	ret = nfct_query(h, NFCT_Q_DUMP_FILTER, filter_dump);

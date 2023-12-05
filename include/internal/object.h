@@ -293,6 +293,7 @@ struct nfct_filter_dump {
 	struct nfct_filter_dump_mark	status;
 	uint8_t				l3num;
 	uint32_t			set;
+	uint16_t			zone;
 };
 
 /*

@@ -547,6 +547,7 @@ enum nfct_filter_dump_attr {
 	NFCT_FILTER_DUMP_MARK = 0,	/* struct nfct_filter_dump_mark */
 	NFCT_FILTER_DUMP_L3NUM,		/* uint8_t */
 	NFCT_FILTER_DUMP_STATUS,	/* struct nfct_filter_dump_mark */
+	NFCT_FILTER_DUMP_ZONE,		/* uint16_t */
 	NFCT_FILTER_DUMP_TUPLE,
 	NFCT_FILTER_DUMP_MAX
 };
@@ -562,6 +563,10 @@ void nfct_filter_dump_set_attr(struct nfct_filter_dump *filter_dump,
 void nfct_filter_dump_set_attr_u8(struct nfct_filter_dump *filter_dump,
 				  const enum nfct_filter_dump_attr type,
 				  uint8_t data);
+
+void nfct_filter_dump_set_attr_u16(struct nfct_filter_dump *filter_dump,
+				  const enum nfct_filter_dump_attr type,
+				  uint16_t data);
 
 /* low level API: netlink functions */
 
