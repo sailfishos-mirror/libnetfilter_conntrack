@@ -850,12 +850,14 @@ __build_query_ct(struct nfnl_subsys_handle *ssh,
 	case NFCT_Q_DUMP_FILTER:
 		nfct_fill_hdr(req, IPCTNL_MSG_CT_GET, NLM_F_DUMP, AF_UNSPEC,
 			      NFNETLINK_V0);
-		assert(__build_filter_dump(req, size, data) == 0);
+		if (__build_filter_dump(req, size, data) < 0)
+			return -1;
 		break;
 	case NFCT_Q_DUMP_FILTER_RESET:
 		nfct_fill_hdr(req, IPCTNL_MSG_CT_GET_CTRZERO, NLM_F_DUMP,
 			      AF_UNSPEC, NFNETLINK_V0);
-		__build_filter_dump(req, size, data);
+		if (__build_filter_dump(req, size, data) < 0)
+			return -1;
 		break;
 	default:
 		errno = ENOTSUP;
