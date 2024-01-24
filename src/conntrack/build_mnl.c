@@ -641,7 +641,6 @@ static uint32_t get_flags_from_ct(const struct nf_conntrack *ct, int family)
 int nfct_nlmsg_build_filter(struct nlmsghdr *nlh,
 			    const struct nfct_filter_dump *filter_dump)
 {
-	bool l3num_changed = false;
 	struct nfgenmsg *nfg;
 
 	if (filter_dump->set & (1 << NFCT_FILTER_DUMP_MARK)) {
@@ -651,7 +650,6 @@ int nfct_nlmsg_build_filter(struct nlmsghdr *nlh,
 	if (filter_dump->set & (1 << NFCT_FILTER_DUMP_L3NUM)) {
 		nfg = mnl_nlmsg_get_payload(nlh);
 		nfg->nfgen_family = filter_dump->l3num;
-		l3num_changed = true;
 	}
 	if (filter_dump->set & (1 << NFCT_FILTER_DUMP_STATUS)) {
 		mnl_attr_put_u32(nlh, CTA_STATUS, htonl(filter_dump->status.val));
@@ -677,8 +675,11 @@ int nfct_nlmsg_build_filter(struct nlmsghdr *nlh,
 		nfg = mnl_nlmsg_get_payload(nlh);
 
 		if (test_bit(ATTR_ORIG_L3PROTO, ct->head.set)) {
-			if (l3num_changed && filter_dump->l3num != ct->head.orig.l3protonum)
+			if (filter_dump->set & (1 << NFCT_FILTER_DUMP_L3NUM) &&
+			    filter_dump->l3num != ct->head.orig.l3protonum) {
+				errno = EINVAL;
 				return -1;
+			}
 
 			nfg->nfgen_family = ct->head.orig.l3protonum;
 		}
