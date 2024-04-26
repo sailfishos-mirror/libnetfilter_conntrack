@@ -336,7 +336,7 @@ add_state_filter_cta(struct sock_filter *this,
 	s = stack_create(sizeof(struct jump), 3 + 32);
 	if (s == NULL) {
 		errno = ENOMEM;
-		return -1;
+		return 0;
 	}
 
 	jt = 1;
@@ -403,7 +403,7 @@ add_state_filter(struct sock_filter *this,
 
 	if (cta[proto].cta_protoinfo == 0 && cta[proto].cta_state == 0) {
 		errno = ENOTSUP;
-		return -1;
+		return 0;
 	}
 
 	return add_state_filter_cta(this,
@@ -448,7 +448,7 @@ bsf_add_proto_filter(const struct nfct_filter *f, struct sock_filter *this)
 	s = stack_create(sizeof(struct jump), 3 + 255);
 	if (s == NULL) {
 		errno = ENOMEM;
-		return -1;
+		return 0;
 	}
 
 	jt = 1;
@@ -520,7 +520,7 @@ bsf_add_addr_ipv4_filter(const struct nfct_filter *f,
 	s = stack_create(sizeof(struct jump), 3 + 127);
 	if (s == NULL) {
 		errno = ENOMEM;
-		return -1;
+		return 0;
 	}
 
 	jt = 1;
@@ -605,7 +605,7 @@ bsf_add_addr_ipv6_filter(const struct nfct_filter *f,
 	s = stack_create(sizeof(struct jump), 3 + 80);
 	if (s == NULL) {
 		errno = ENOMEM;
-		return -1;
+		return 0;
 	}
 
 	jf = 1;
@@ -704,7 +704,7 @@ bsf_add_mark_filter(const struct nfct_filter *f, struct sock_filter *this)
 	s = stack_create(sizeof(struct jump), 3 + 127);
 	if (s == NULL) {
 		errno = ENOMEM;
-		return -1;
+		return 0;
 	}
 
 	jt = 1;
