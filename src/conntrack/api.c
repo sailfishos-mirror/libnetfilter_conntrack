@@ -40,7 +40,7 @@
  *  - inserting/modifying/deleting entries from the kernel expect table.
  * \section Git Tree
  * The current development version of libnetfilter_conntrack can be accessed at
- * https://git.netfilter.org/cgi-bin/gitweb.cgi?p=libnetfilter_conntrack.git
+ * https://git.netfilter.org/libnetfilter_conntrack/
  *
  * \section Privileges
  * You need the CAP_NET_ADMIN capability in order to allow your application
