@@ -104,6 +104,15 @@ static void filter_attr_mark(struct nfct_filter *filter, const void *value)
 	filter->mark_elems++;
 }
 
+static void filter_attr_zone(struct nfct_filter *filter, const void *value)
+{
+	if (filter->zone_elems >= __FILTER_ZONE_MAX)
+		return;
+
+	filter->zone[filter->zone_elems] = *(uint16_t *) value;
+	filter->zone_elems++;
+}
+
 const filter_attr filter_attr_array[NFCT_FILTER_MAX] = {
 	[NFCT_FILTER_L4PROTO]		= filter_attr_l4proto,
 	[NFCT_FILTER_L4PROTO_STATE]	= filter_attr_l4proto_state,
@@ -112,4 +121,5 @@ const filter_attr filter_attr_array[NFCT_FILTER_MAX] = {
 	[NFCT_FILTER_SRC_IPV6]		= filter_attr_src_ipv6,
 	[NFCT_FILTER_DST_IPV6]		= filter_attr_dst_ipv6,
 	[NFCT_FILTER_MARK]		= filter_attr_mark,
+	[NFCT_FILTER_ZONE]		= filter_attr_zone,
 };

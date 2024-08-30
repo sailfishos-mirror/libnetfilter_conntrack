@@ -510,6 +510,7 @@ enum nfct_filter_attr {
 	NFCT_FILTER_SRC_IPV6,		/* struct nfct_filter_ipv6 */
 	NFCT_FILTER_DST_IPV6,		/* struct nfct_filter_ipv6 */
 	NFCT_FILTER_MARK,		/* struct nfct_filter_dump_mark */
+	NFCT_FILTER_ZONE,		/* uint16_t */
 	NFCT_FILTER_MAX
 };
 

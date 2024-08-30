@@ -280,6 +280,10 @@ struct nfct_filter {
 		uint32_t 	mask;
 	} mark[__FILTER_MARK_MAX];
 
+	uint32_t	  zone_elems;
+#define __FILTER_ZONE_MAX	127
+	uint16_t zone[__FILTER_ZONE_MAX];
+
 	uint32_t 		set[1];
 };
 
