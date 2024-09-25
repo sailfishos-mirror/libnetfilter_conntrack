@@ -4,7 +4,7 @@
 /*
  * conntrack internal prototypes
  */
-int __build_conntrack(struct nfnl_subsys_handle *ssh, struct nfnlhdr *req, size_t size, uint16_t type, uint16_t flags, const struct nf_conntrack *ct);
+int __build_conntrack(struct nfnlhdr *req, size_t size, uint16_t type, uint16_t flags, const struct nf_conntrack *ct);
 void __build_tuple(struct nfnlhdr *req, size_t size, const struct __nfct_tuple *t, const int type);
 int __snprintf_conntrack(char *buf, unsigned int len, const struct nf_conntrack *ct, unsigned int type, unsigned int msg_output, unsigned int flags, struct nfct_labelmap *);
 int __snprintf_address(char *buf, unsigned int len, const struct __nfct_tuple *tuple, const char *src_tag, const char *dst_tag);
@@ -44,7 +44,7 @@ int nfct_parse_tuple(const struct nlattr *attr, struct __nfct_tuple *tuple, int 
 /*
  * expectation internal prototypes
  */
-int __build_expect(struct nfnl_subsys_handle *ssh, struct nfnlhdr *req, size_t size, uint16_t type, uint16_t flags, const struct nf_expect *exp);
+int __build_expect(struct nfnlhdr *req, size_t size, uint16_t type, uint16_t flags, const struct nf_expect *exp);
 int __expect_callback(struct nlmsghdr *nlh, struct nfattr *nfa[], void *data);
 int __cmp_expect(const struct nf_expect *exp1, const struct nf_expect *exp2, unsigned int flags);
 int __snprintf_expect(char *buf, unsigned int len, const struct nf_expect *exp, unsigned int type, unsigned int msg_output, unsigned int flags);
